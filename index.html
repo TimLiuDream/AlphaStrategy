@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>币安 Alpha 空投策略回测器</title>
+<script src="./echarts.min.js"></script>
+<script src="./data.js"></script>
+<style>
+  :root{
+    --bg:#0b0e14; --card:#141922; --card2:#1a212e; --border:#232c3d;
+    --txt:#dbe2ef; --dim:#7b8798; --yellow:#f0b90b; --blue:#38bdf8; --purple:#a78bfa;
+    --green:#34d399; --red:#f87171;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font:14px/1.6 "Segoe UI","Microsoft YaHei",sans-serif;padding:24px 20px 60px}
+  .wrap{max-width:1240px;margin:0 auto}
+  h1{font-size:22px;color:#fff}
+  h1 .y{color:var(--yellow)}
+  .sub{color:var(--dim);font-size:12.5px;margin-top:4px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+  .panel{margin-top:16px;display:flex;flex-wrap:wrap;gap:14px 26px;align-items:flex-end}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field label{font-size:12px;color:var(--dim)}
+  select,input[type=number]{background:var(--card2);border:1px solid var(--border);color:var(--txt);border-radius:8px;padding:7px 10px;font-size:13.5px;outline:none}
+  input[type=number]{width:110px}
+  input[type=checkbox]{accent-color:var(--yellow);width:15px;height:15px}
+  .chk{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;user-select:none}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:16px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
+  .stat .tag{font-size:12.5px;color:var(--dim);display:flex;align-items:center;gap:7px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .stat .big{font-size:25px;font-weight:700;color:#fff;margin-top:6px;font-variant-numeric:tabular-nums}
+  .stat .note{font-size:12px;color:var(--dim);margin-top:4px}
+  .chart{margin-top:16px;height:420px}
+  .chart.small{height:360px}
+  table{width:100%;border-collapse:collapse;margin-top:14px;font-size:12.8px;font-variant-numeric:tabular-nums}
+  th{color:var(--dim);font-weight:600;text-align:right;padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--card);z-index:2}
+  th:first-child,td:first-child{text-align:left}
+  td{padding:8px 10px;border-bottom:1px solid #1c2433;text-align:right;white-space:nowrap}
+  tr.row{cursor:pointer}
+  tr.row:hover td{background:#181f2b}
+  tr.det td{background:var(--card2);padding:0;cursor:default}
+  .det-in{padding:12px 16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .spark{background:#0e131c;border:1px solid var(--border);border-radius:8px}
+  .det-facts{font-size:12.5px;color:var(--dim);line-height:1.9}
+  .det-facts b{color:var(--txt)}
+  .badge{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:20px;background:#2a2410;color:var(--yellow);border:1px solid #4a3d12;margin-left:6px;vertical-align:1px}
+  .mult-hi{color:var(--green)} .mult-lo{color:var(--red)}
+  .legend{display:flex;gap:18px;font-size:12.5px;color:var(--dim);flex-wrap:wrap;margin-top:10px}
+  .foot{margin-top:26px;font-size:12px;color:var(--dim);line-height:1.9}
+  .foot b{color:var(--txt)}
+  h2{font-size:15px;color:#fff;margin-top:26px;margin-bottom:0}
+  .num-pos{color:var(--green)} .num-neg{color:var(--red)}
+  .cov{margin-top:10px;font-size:12px;color:var(--dim)}
+  .cov b{color:var(--txt)}
+  @media(max-width:760px){.chart{height:330px}.big{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>币安 Alpha <span class="y">空投策略</span>回测器</h1>
+  <div class="sub" id="meta"></div>
+
+  <div class="card panel">
+    <div class="field">
+      <label>策略B目标倍数</label>
+      <select id="mult">
+        <option value="1.5">1.5×</option>
+        <option value="2" selected>2×（翻倍）</option>
+        <option value="3">3×</option>
+        <option value="5">5×</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>卖出滑点</label>
+      <select id="slip">
+        <option value="0">0%</option>
+        <option value="0.01" selected>1%</option>
+        <option value="0.02">2%</option>
+        <option value="0.05">5%</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>参与年份</label>
+      <div style="display:flex;gap:12px">
+        <label class="chk"><input type="checkbox" id="y2025" checked>2025</label>
+        <label class="chk"><input type="checkbox" id="y2026" checked>2026</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>公链</label>
+      <select id="chain"><option value="">全部</option></select>
+    </div>
+    <div class="field">
+      <label>&nbsp;</label>
+      <label class="chk"><input type="checkbox" id="onlyCex">仅看已上币安现货的</label>
+    </div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="cov" id="cov"></div>
+
+  <h2>账户总额累计曲线（按期次时间累计，四种策略）</h2>
+  <div id="c1" class="card chart"></div>
+  <div class="legend" id="lg1"></div>
+
+  <h2>每期最高价 / 首日开盘 倍数分布（对数轴）</h2>
+  <div id="c2" class="card chart small"></div>
+
+  <h2>每期明细 <span style="font-size:12px;color:var(--dim);font-weight:400">（点击行展开走势）</span></h2>
+  <div class="card" style="overflow:auto;max-height:640px">
+    <table id="tbl">
+      <thead><tr>
+        <th style="text-align:left">币种</th><th>链</th><th>分发日</th><th>门槛→数量</th><th>首日开盘 $</th><th>现价 $</th>
+        <th>最高倍</th><th>当前倍</th><th>立刻卖 $</th><th>翻倍卖 $</th><th>一直不卖 $</th><th>半卖半持 $</th>
+      </tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+(function(){
+const D = window.ALPHA_DATA;
+const $ = id => document.getElementById(id);
+const fmt$ = v => v >= 1000 ? '$' + Math.round(v).toLocaleString('en-US') : '$' + v.toFixed(2);
+const fmtX = v => v >= 100 ? v.toFixed(0) + '×' : v.toFixed(2) + '×';
+const dayOf = ms => Math.floor(ms / 86400000);
+const C = { instant:'#38bdf8', dbl:'#f0b90b', hold:'#a78bfa', half:'#34d399' };
+
+$('meta').textContent = `数据快照 ${D.snapshotDate} ｜ 期次：币安 Alpha 全量列表（bapi 接口）｜ 分发记录：alpha123.uk（${D.stats.withDrops} 个币有真实门槛/数量）｜ 价格：GeckoTerminal 日线 ｜ 样本 ${D.stats.withHistory}/${D.stats.total} 币`;
+
+// 链下拉
+[...new Set(D.tokens.map(t => t.ch))].forEach(ch => {
+  const o = document.createElement('option'); o.value = ch; o.textContent = ch; $('chain').appendChild(o);
+});
+
+// —— 核心：单期回测。每「分发轮」为一期：有真实分发记录的按真实数量，无记录的币不参与 ——
+function firstIdxFrom(t, dayAnchor){
+  let i = t.c.findIndex(c => c[0] >= dayAnchor - 1);
+  if (i < 0) i = 0;
+  return i;
+}
+function evalToken(t, mult, units, slip, dayAnchor, drop){
+  const cs = t.c, i0 = firstIdxFrom(t, dayAnchor);
+  const o0 = cs[i0][1], hMax = Math.max(...cs.slice(i0).map(c => c[2])), cLast = cs[cs.length - 1][3];
+  if (!(o0 > 0) || !(cLast >= 0)) return null;
+  const target = mult * o0;
+  const hit = hMax >= target;
+  return {
+    t, i0, o0, hMax, cLast, drop, anchor: dayAnchor,
+    hit,
+    lateData: cs[i0][0] - dayAnchor > 14,           // 首根K线距锚点超2周，首日价口径存疑
+    vInstant: o0 * units * (1 - slip),
+    vDbl: hit ? target * units * (1 - slip) : cLast * units,
+    vHold: cLast * units,
+    vHalf: (o0 * (1 - slip) + cLast) * units / 2,
+    multMax: hMax / o0,
+    multNow: cLast / o0
+  };
+}
+function runBacktest(){
+  const mult = parseFloat($('mult').value), slip = parseFloat($('slip').value);
+  const y25 = $('y2025').checked, y26 = $('y2026').checked, ch = $('chain').value, onlyCex = $('onlyCex').checked;
+  const rows = [];
+  for (const t of D.tokens) {
+    if (!t.drops.length) continue;                       // 只回测有真实分发记录的轮次
+    if (ch && t.ch !== ch) continue;
+    if (onlyCex && !t.cex) continue;
+    for (const dp of t.drops) {
+      const anchor = Math.floor(new Date(dp.d + 'T00:00:00Z').getTime() / 86400000);
+      if (!isFinite(anchor)) continue;
+      const yd = new Date(anchor * 86400000).getFullYear();
+      if (yd === 2025 && !y25) continue;
+      if (yd === 2026 && !y26) continue;
+      if (dp.amt == null || dp.amt <= 0) continue;
+      const r = evalToken(t, mult, dp.amt, slip, anchor, dp);
+      if (r) rows.push(r);
+    }
+  }
+  rows.sort((a, b) => a.anchor - b.anchor);
+  return { mult, slip, rows };
+}
+
+// —— 汇总卡 ——
+function renderStats(bt){
+  const rows = bt.rows;
+  const S = k => rows.reduce((a, r) => a + r[k], 0);
+  const sI = S('vInstant'), sD = S('vDbl'), sH = S('vHold'), sF = S('vHalf');
+  const hits = rows.filter(r => r.hit).length;
+  const n = rows.length || 1;
+  const totalCoins = rows.reduce((a, r) => a + (r.drop ? r.drop.amt : 0), 0);
+  const cards = [
+    { c: C.instant, tag: '策略A · 领取即卖', big: fmt$(sI), note: `平均每期 ${fmt$(sI / n)}（假设首日开盘价成交）` },
+    { c: C.dbl, tag: `策略B · 挂 ${bt.mult}× 卖单`, big: fmt$(sD), note: `达标 ${hits}/${n} 期（${(hits / n * 100).toFixed(0)}%），未达标按现价计值` },
+    { c: C.hold, tag: '策略C · 一直不卖', big: fmt$(sH), note: `按快照日现价估值，平均每期 ${fmt$(sH / n)}` },
+    { c: C.half, tag: '策略D · 卖一半留一半', big: fmt$(sF), note: `一半首日卖 + 一半拿到现在，等于 A 和 C 各取一半` },
+    { c: sH >= sI ? C.half : '#f87171', tag: '持有 vs 立刻卖', big: (sH / sI).toFixed(2) + '×', note: `持有比立刻卖${sH >= sI ? '多' : '少'} ${fmt$(Math.abs(sH - sI))}` }
+  ];
+  $('stats').innerHTML = cards.map(c =>
+    `<div class="stat"><div class="tag"><span class="dot" style="background:${c.c}"></span>${c.tag}</div><div class="big">${c.big}</div><div class="note">${c.note}</div></div>`).join('');
+  const holdSorted = [...rows].sort((a, b) => b.vHold - a.vHold);
+  const top5Share = sH > 0 ? holdSorted.slice(0, 5).reduce((a, r) => a + r.vHold, 0) / sH * 100 : 0;
+  const aboveOne = rows.filter(r => r.multNow > 1).length;
+  const medNow = [...rows].sort((a, b) => a.multNow - b.multNow)[Math.floor(rows.length / 2)];
+  $('cov').innerHTML = `本轮回测 <b>${n}</b> 轮分发（每轮都按真实数量领取，合计 <b>${Math.round(totalCoins).toLocaleString()}</b> 个代币） ｜ 滑点 <b>${(bt.slip * 100).toFixed(0)}%</b><br>` +
+    `持仓价值 TOP5 轮次占「不卖」总额 <b>${top5Share.toFixed(0)}%</b>${top5Share > 50 ? ' ⚠️ 高度集中，结论由极少数赢家主导' : ''} ｜ 当前仍 ≥1× 的轮次 <b>${aboveOne}/${n}</b>（${(aboveOne / n * 100).toFixed(0)}%） ｜ 中位数轮次现值 <b>${fmtX(medNow.multNow)}</b>`;
+}
+
+// —— 图1：累计账户总额 ——
+let chart1, chart2;
+function renderC1(bt){
+  const rows = bt.rows;
+  let a = 0, b = 0, c = 0, f = 0;
+  const xs = [], A = [], B = [], Cc = [], F = [];
+  for (const r of rows) {
+    a += r.vInstant; b += r.vDbl; c += r.vHold; f += r.vHalf;
+    const d = new Date(r.anchor * 86400000);
+    xs.push(`${String(d.getFullYear()).slice(2)}/${d.getMonth() + 1}/${d.getDate()}`);
+    A.push(+a.toFixed(1)); B.push(+b.toFixed(1)); Cc.push(+c.toFixed(1)); F.push(+f.toFixed(1));
+  }
+  chart1 = chart1 || echarts.init($('c1'));
+  chart1.setOption({
+    animation: false,
+    grid: { left: 70, right: 20, top: 34, bottom: 46 },
+    tooltip: { trigger: 'axis', backgroundColor: '#1a212e', borderColor: '#232c3d', textStyle: { color: '#dbe2ef', fontSize: 12 } },
+    legend: { top: 0, textStyle: { color: '#7b8798' }, data: ['A 立刻卖', `B 挂 ${bt.mult}×`, 'C 不卖', 'D 半卖半持'] },
+    xAxis: { type: 'category', data: xs, axisLabel: { color: '#7b8798', fontSize: 11 }, axisLine: { lineStyle: { color: '#232c3d' } } },
+    yAxis: { type: 'value', name: 'USD', nameTextStyle: { color: '#7b8798' }, axisLabel: { color: '#7b8798', formatter: v => v >= 1000 ? (v / 1000) + 'k' : v }, splitLine: { lineStyle: { color: '#1c2433' } } },
+    series: [
+      { name: 'A 立刻卖', type: 'line', data: A, symbol: 'none', lineStyle: { color: C.instant, width: 2 }, itemStyle: { color: C.instant } },
+      { name: `B 挂 ${bt.mult}×`, type: 'line', data: B, symbol: 'none', lineStyle: { color: C.dbl, width: 2 }, itemStyle: { color: C.dbl } },
+      { name: 'C 不卖', type: 'line', data: Cc, symbol: 'none', lineStyle: { color: C.hold, width: 2 }, itemStyle: { color: C.hold } },
+      { name: 'D 半卖半持', type: 'line', data: F, symbol: 'none', lineStyle: { color: C.half, width: 2 }, itemStyle: { color: C.half } }
+    ]
+  }, true);
+  $('lg1').textContent = '口径：x 轴为每轮分发日期；y 为该轮及之前所有轮次、按对应策略处置后的账户合计。持有仓按数据快照日现价估值。';
+}
+
+// —— 图2：每期最高倍数散点（log） ——
+function renderC2(bt){
+  const rows = bt.rows;
+  const data = rows.map(r => [r.anchor * 86400000, +r.multMax.toFixed(3), r.t.s, r.t.cex]);
+  chart2 = chart2 || echarts.init($('c2'));
+  chart2.setOption({
+    animation: false,
+    grid: { left: 70, right: 20, top: 34, bottom: 40 },
+    tooltip: { backgroundColor: '#1a212e', borderColor: '#232c3d', textStyle: { color: '#dbe2ef', fontSize: 12 },
+      formatter: p => `${p.data[2]}<br>最高 ${fmtX(p.data[1])}` },
+    xAxis: { type: 'time', axisLabel: { color: '#7b8798' }, axisLine: { lineStyle: { color: '#232c3d' } } },
+    yAxis: { type: 'log', name: '最高倍数', nameTextStyle: { color: '#7b8798' }, axisLabel: { color: '#7b8798', formatter: v => v + '×' }, splitLine: { lineStyle: { color: '#1c2433' } } },
+    series: [
+      { type: 'scatter', symbolSize: 9, data: data.filter(d => d[3]), itemStyle: { color: '#f0b90b', opacity: .85 }, name: '已上币安现货' },
+      { type: 'scatter', symbolSize: 7, data: data.filter(d => !d[3]), itemStyle: { color: '#5b6b85', opacity: .75 }, name: '仅 Alpha' },
+      { type: 'line', data: [[data[0] ? data[0][0] : 0, 1], [Date.now(), 1]], symbol: 'none', lineStyle: { color: '#5b6b85', type: 'dashed' }, tooltip: { show: false }, silent: true },
+      { type: 'line', data: [[data[0] ? data[0][0] : 0, bt.mult], [Date.now(), bt.mult]], symbol: 'none', lineStyle: { color: '#34d399', type: 'dashed' }, tooltip: { show: false }, silent: true }
+    ]
+  }, true);
+}
+
+// —— 明细表 + sparkline ——
+function sparkSVG(t, r){
+  const cs = t.c.slice(r.i0), W = 300, H = 76, P = 4;
+  const closes = cs.map(c => c[3]).filter(v => v > 0);
+  if (closes.length < 2) return '';
+  const norm = closes.map(v => Math.max(0.01, v / r.o0));
+  const lo = Math.min(...norm), hi = Math.max(...norm, bt.mult);
+  const X = i => P + (W - 2 * P) * i / (norm.length - 1);
+  const Y = v => H - P - (H - 2 * P) * (Math.log(v) - Math.log(lo)) / (Math.log(hi) - Math.log(lo));
+  const pts = norm.map((v, i) => X(i).toFixed(1) + ',' + Y(v).toFixed(1)).join(' ');
+  const yT = Y(bt.mult);
+  const yNow = Y(norm[norm.length - 1]);
+  return `<svg class="spark" width="${W}" height="${H}"><polyline points="${pts}" fill="none" stroke="#38bdf8" stroke-width="1.6"/>
+    <line x1="${P}" y1="${yT}" x2="${W - P}" y2="${yT}" stroke="#34d399" stroke-dasharray="4 3"/>
+    <circle cx="${X(norm.length - 1)}" cy="${yNow}" r="3" fill="#f0b90b"/></svg>`;
+}
+let bt, openRow = -1;
+function renderTable(btData){
+  const tb = $('tb'); tb.innerHTML = '';
+  openRow = -1;
+  btData.rows.forEach((r, i) => {
+    const t = r.t, d = new Date(r.anchor * 86400000);
+    const tr = document.createElement('tr');
+    tr.className = 'row'; tr.dataset.i = i;
+    const qty = r.drop && r.drop.pts != null ? `${r.drop.pts}分→${r.drop.amt.toLocaleString()}个` : `${r.drop ? r.drop.amt.toLocaleString() : '?'}个`;
+    tr.innerHTML =
+      `<td style="text-align:left"><b>${t.s}</b> <span style="color:var(--dim);font-size:11.5px">${(t.n || '').slice(0, 14)}</span>${t.cex ? '<span class="badge">现货</span>' : ''}${r.lateData ? ' <span title="首根K线距分发日超2周，首日价口径存疑" style="color:var(--dim)">◇</span>' : ''}</td>` +
+      `<td style="color:var(--dim)">${t.ch}</td>` +
+      `<td>${d.getFullYear() - 2000}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}</td>` +
+      `<td style="color:var(--dim)">${qty}</td>` +
+      `<td>${r.o0 < 0.01 ? r.o0.toExponential(1) : r.o0.toPrecision(4)}</td>` +
+      `<td>${r.cLast < 0.01 ? r.cLast.toExponential(1) : r.cLast.toPrecision(4)}</td>` +
+      `<td class="${r.multMax >= bt.mult ? 'mult-hi' : (r.multMax < 1 ? 'mult-lo' : '')}">${fmtX(r.multMax)}</td>` +
+      `<td class="${r.multNow >= 1 ? 'mult-hi' : 'mult-lo'}">${fmtX(r.multNow)}</td>` +
+      `<td>${fmt$(r.vInstant)}</td>` +
+      `<td>${r.hit ? `<b style="color:var(--yellow)">${fmt$(r.vDbl)}</b>` : fmt$(r.vDbl)}</td>` +
+      `<td>${fmt$(r.vHold)}</td>` +
+      `<td style="color:var(--green)">${fmt$(r.vHalf)}</td>`;
+    tr.onclick = () => toggleDet(i);
+    tb.appendChild(tr);
+  });
+}
+function toggleDet(i){
+  const tb = $('tb');
+  const old = tb.querySelector('tr.det'); if (old) old.remove();
+  if (openRow === i) { openRow = -1; return; }
+  openRow = i;
+  const r = bt.rows[i], t = r.t;
+  const tr = document.createElement('tr'); tr.className = 'det';
+  tr.innerHTML = `<td colspan="12"><div class="det-in">
+    ${sparkSVG(t, r)}
+    <div class="det-facts">
+      <b>${t.s}</b>（${t.n}）· ${t.ch} · 分发日 ${new Date(r.anchor * 86400000).toISOString().slice(0, 10)}${r.drop && r.drop.pts != null ? ` · 门槛 <b>${r.drop.pts} 分</b> → 领 <b>${r.drop.amt.toLocaleString()}</b> 个` : ''}<br>
+      首日开盘 <b>${fmt$(r.o0)}</b> → 现价 <b>${fmt$(r.cLast)}</b>（当前 <b>${fmtX(r.multNow)}</b>，历史最高 <b>${fmtX(r.multMax)}</b>）<br>
+      ${bt.mult}×挂单${r.hit ? '已触发 ✓' : '未触发 ✗（按现价计值）'} ｜ 半卖半持 = <b>${fmt$(r.vHalf)}</b>（${fmt$(r.vInstant / 2)} 已落袋 + ${fmt$(r.vHold / 2)} 持仓） ｜ ${t.cex ? '已上币安现货' + (t.cexn ? '：' + t.cexn : '') : '未上主站现货'}
+    </div></div></td>`;
+  tb.children[i].after(tr);
+  setTimeout(() => tr.scrollIntoView({ block: 'nearest' }), 0);
+}
+
+function renderAll(){
+  try {
+    bt = runBacktest();
+    renderStats(bt); renderC1(bt); renderC2(bt); renderTable(bt);
+    bt._all = bt; // for sparkSVG access
+  } catch(e) {
+    $('cov').innerHTML = '<span style="color:#f87171">回测出错: ' + e.message + '<br>' + (e.stack || '').split('\n').slice(0, 4).join('<br>') + '</span>';
+    console.error(e);
+  }
+}
+window.addEventListener('resize', () => { chart1 && chart1.resize(); chart2 && chart2.resize(); });
+['mult', 'slip', 'y2025', 'y2026', 'chain', 'onlyCex'].forEach(id => $(id).addEventListener('change', renderAll));
+renderAll();
+
+$('foot').innerHTML = `
+<b>模型假设与口径</b><br>
+① 回测单位是<b>每一轮分发</b>（来源 alpha123.uk，按合约地址匹配），假设每一轮你都完整抢到，数量按该轮真实每号分发量计；无分发记录的币不参与回测。<br>
+② 每轮的首日价 = 分发日（±1 天）起第一根日线<b>开盘价</b>（多轮空投各自锚定自己那轮的日期）；◇ 表示首根 K 线距分发日超过 2 周，口径存疑。<br>
+③ 策略B = 领取即挂 ${$('mult').value}× 限价卖单；历史最高价触及则按目标价成交（扣滑点），未触及视为仍挂单、按快照现价计账面值。<br>
+④ 策略C 的持仓按快照日（${D.snapshotDate}）现价估值；曲线中的持有仓位同样按快照现价回算。<br>
+⑤ 策略D = 一半按首日开盘卖出、一半持有到快照日，即 A 与 C 的算术平均（不含再平衡）。<br>
+⑥ 未计入：领取 Gas/手续费、卖出深度不足导致的额外冲击、部分期次需先提币再卖等。<br>
+⑦ 个别低流动性期次的池子存在异常尖峰价（拉盘到极高再砸），会高估「翻倍卖」的成交概率，明细中最高倍数离谱的期次请自行甄别。<br>
+<b>数据来源</b>：币安 Alpha 全量代币列表（binance.com 公开 bapi 接口）；分发历史（积分门槛/数量）来自 alpha123.uk；日线行情来自 GeckoTerminal 公共 API（聚合链上主池）。价格历史缺失的币未纳入，当前覆盖 ${D.stats.withHistory}/${D.stats.total} 币，其中 ${D.stats.withDrops} 币有真实分发记录。<br>
+<b>免责</b>：本页面仅为历史数据的简化回测演示，不构成投资建议。Alpha 存在幸存者偏差——已归零/退市的币可能不在当前列表中，「一直不卖」策略的实际结果可能更差。
+`;
+})();
+</script>
+</body>
+</html>
