@@ -1,0 +1,107 @@
+[
+ {
+  "symbol": "KAT",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "TRUTH",
+  "chain": "Sui",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "FOGO",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "Sight",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "XNAP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SUBHUB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "BARD",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MIRROR",
+  "chain": "Base",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SHARDS",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "TOWN",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "BSU",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "YALA",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "TANSSI",
+  "chain": "Ethereum",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MORE",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "BOMB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "PUNDIAI",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "RESOLV",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "ASRR",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SOPH",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "PFVS",
+  "chain": "Ethereum",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MILK",
+  "chain": "BSC",
+  "reason": "no_pool"
+ }
+]

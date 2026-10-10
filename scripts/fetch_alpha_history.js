@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const DATA = path.join(ROOT, 'data');
+const refresh = process.argv.includes('--refresh');
 
 const raw = JSON.parse(fs.readFileSync(path.join(DATA, 'alpha_tokens_raw.json'), 'utf8')).data;
 const NET = { BSC: 'bsc', Base: 'base', Ethereum: 'eth', Arbitrum: 'arbitrum', Solana: 'solana', Sui: 'sui-network', Linea: 'linea', Sonic: 'sonic' };
@@ -14,7 +15,7 @@ console.log(`targets: ${targets.length}`);
 
 const doneSet = new Set();
 const doneFile = path.join(DATA, 'fetch_done.json');
-if (fs.existsSync(doneFile)) JSON.parse(fs.readFileSync(doneFile, 'utf8')).forEach(s => doneSet.add(s));
+if (!refresh && fs.existsSync(doneFile)) JSON.parse(fs.readFileSync(doneFile, 'utf8')).forEach(s => doneSet.add(s));
 const todo = targets.filter(t => !doneSet.has(t.symbol + '@' + t.contractAddress));
 console.log(`todo: ${todo.length} (done: ${doneSet.size})`);
 
@@ -32,7 +33,15 @@ async function get(url, tries = 6) {
   return undefined; // 彻底失败
 }
 
-const ndjson = fs.createWriteStream(path.join(DATA, 'alpha_history.ndjson'), { flags: 'a' });
+const historyFile = path.join(DATA, 'alpha_history.ndjson');
+const records = new Map();
+if (refresh && fs.existsSync(historyFile)) {
+  for (const line of fs.readFileSync(historyFile, 'utf8').split('\n').filter(Boolean)) {
+    const r = JSON.parse(line);
+    records.set(r.symbol + '@' + r.contract, r);
+  }
+}
+const ndjson = refresh ? null : fs.createWriteStream(historyFile, { flags: 'a' });
 const failed = [];
 
 async function main() {
@@ -80,14 +89,26 @@ async function main() {
       const bars = j.data.attributes.ohlcv_list; // [ts,o,h,l,c,vol] 倒序
       const candles = bars.map(b => [b[0], b[1], b[2], b[4]]).sort((a, b) => a[0] - b[0]);
       const rec = { symbol: t.symbol, name: t.name, chain: t.chainName, contract: t.contractAddress, listingTime: t.listingTime, listingCex: !!t.listingCex, cexCoinName: t.cexCoinName || '', priceNow: t.price, candles };
-      ndjson.write(JSON.stringify(rec) + '\n');
+      rec.fetchedAt = new Date().toISOString();
+      if (refresh) {
+        const key = t.symbol + '@' + t.contractAddress;
+        const previous = records.get(key);
+        const merged = new Map((previous?.candles || []).map(c => [c[0], c]));
+        for (const c of rec.candles) merged.set(c[0], c);
+        rec.candles = [...merged.values()].sort((a, b) => a[0] - b[0]);
+        records.set(key, rec);
+      }
+      else ndjson.write(JSON.stringify(rec) + '\n');
       console.log(`[${n}/${todo.length}] ${t.symbol} bars=${candles.length}`);
       doneSet.add(t.symbol + '@' + t.contractAddress);
       fs.writeFileSync(doneFile, JSON.stringify([...doneSet]));
     }
     await sleep(3400);
   }
-  ndjson.end();
+  if (refresh) {
+    fs.writeFileSync(historyFile + '.tmp', [...records.values()].map(r => JSON.stringify(r)).join('\n') + '\n');
+    fs.renameSync(historyFile + '.tmp', historyFile);
+  } else ndjson.end();
   fs.writeFileSync(path.join(DATA, 'fetch_failed.json'), JSON.stringify(failed, null, 1));
   console.log(`ALL DONE. ok=${todo.length - failed.length} failed=${failed.length}`);
 }

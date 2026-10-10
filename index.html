@@ -132,6 +132,10 @@ const dayOf = ms => Math.floor(ms / 86400000);
 const C = { instant:'#38bdf8', dbl:'#f0b90b', hold:'#a78bfa', half:'#34d399' };
 
 $('meta').textContent = `数据快照 ${D.snapshotDate} ｜ 期次：币安 Alpha 全量列表（bapi 接口）｜ 分发记录：alpha123.uk（${D.stats.withDrops} 个币有真实门槛/数量）｜ 价格：GeckoTerminal 日线 ｜ 样本 ${D.stats.withHistory}/${D.stats.total} 币`;
+if (D.tokens.some(t => t.fetchedAt)) {
+  const refreshed = D.tokens.filter(t => t.fetchedAt && t.fetchedAt.slice(0, 10) === D.snapshotDate).length;
+  $('meta').textContent += ` ｜ 本次刷新 ${refreshed} 币，${D.tokens.length - refreshed} 币沿用旧行情（持有估值取各币最后日线收盘价）`;
+}
 
 // 链下拉
 [...new Set(D.tokens.map(t => t.ch))].forEach(ch => {

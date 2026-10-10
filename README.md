@@ -26,8 +26,10 @@ npx vercel --prod   # 后续发布
 
 ```bash
 node scripts/fetch_alpha_history.js   # 增量抓取日K（GeckoTerminal 限流约30次/分，支持断点续传）
+node scripts/fetch_alpha_history.js --refresh # 刷新全部标的行情；失败标的保留旧数据，详见 data/fetch_failed.json
 node scripts/build_data.js            # 重新合成根目录 data.js
 node scripts/test_backtest.js         # 回测引擎单测
+node scripts/run_backtest.js          # 使用页面默认参数回测，输出 data/backtest_results.json
 ```
 
 然后重新部署（git push 或 `vercel --prod`）。

@@ -37,6 +37,7 @@ for (const line of lines) {
       s: r.symbol, n: r.name, ch: r.chain, a: r.contract,
       t: r.listingTime, cex: !!r.listingCex, cexn: cexCoinName,
       pn: parseFloat(r.priceNow),
+      fetchedAt: r.fetchedAt || null,
       drops: dropsByAddr.get(String(r.contract).toLowerCase()) || [],
       c: r.candles.filter(b => b[1] > 0 && b[2] > 0 && b[3] != null).map(b => [Math.round(b[0] * 1000 / 86400000), // 秒→天序号 (epoch days)
         parseFloat(Number(b[1]).toPrecision(6)),
