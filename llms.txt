@@ -16,3 +16,10 @@
 ## 项目说明
 
 - [源代码与使用说明](https://github.com/TimLiuDream/AlphaStrategy)：公开实现、数据更新命令与回测口径。
+
+## 联系方式
+
+- Telegram：[@dreamtimliu](https://t.me/dreamtimliu)（交流与合作首选）
+- GitHub：[TimLiuDream](https://github.com/TimLiuDream)
+- X：[@timliu92](https://x.com/timliu92)
+- 微信：liufotian1992

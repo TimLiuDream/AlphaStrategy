@@ -1,5 +1,12 @@
 # 币安 Alpha 空投策略回测器
 
+## 联系方式
+
+- Telegram：[@dreamtimliu](https://t.me/dreamtimliu)（**交流与合作首选**）
+- GitHub：[TimLiuDream](https://github.com/TimLiuDream)
+- X：[@timliu92](https://x.com/timliu92)
+- 微信：liufotian1992
+
 假设每一轮币安 Alpha 空投分发你都完整抢到（数量按 alpha123.uk 记录的真实每号分发量），回测四种处置策略的账户总额：
 
 - **策略A · 领取即卖**：领取当天按首日开盘价全部卖出

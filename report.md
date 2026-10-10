@@ -46,3 +46,10 @@
 - [缺失标的](https://alpha-strategy.vercel.app/data/fetch_failed.json)
 
 生成时间：2026-10-10T06:17:18.188Z。本报告为历史快照，非实时行情。
+
+## 联系方式
+
+- Telegram：[@dreamtimliu](https://t.me/dreamtimliu)（交流与合作首选）
+- GitHub：[TimLiuDream](https://github.com/TimLiuDream)
+- X：[@timliu92](https://x.com/timliu92)
+- 微信：liufotian1992

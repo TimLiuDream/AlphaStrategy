@@ -5,6 +5,19 @@ const root = path.join(__dirname, '..');
 const site = 'https://alpha-strategy.vercel.app';
 const escape = text => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 module.exports = function buildPublicContent(r) {
+  const contacts = [
+    ['Telegram', '@dreamtimliu', 'https://t.me/dreamtimliu', '交流与合作首选'],
+    ['GitHub', 'TimLiuDream', 'https://github.com/TimLiuDream', ''],
+    ['X', '@timliu92', 'https://x.com/timliu92', ''],
+    ['微信', 'liufotian1992', '', ''],
+  ];
+  const contactMarkdown = ['## 联系方式', '', ...contacts.map(([name, label, url, note]) => `- ${name}：${url ? `[${label}](${url})` : label}${note ? `（${note}）` : ''}`)].join('\n');
+  const contactHtml = `<section aria-label="联系方式" style="margin-top:32px"><h2>联系方式</h2><ul>${contacts.map(([name, label, url, note]) => `<li>${escape(name)}：${url ? `<a href="${escape(url)}">${escape(label)}</a>` : escape(label)}${note ? `（<strong>${escape(note)}</strong>）` : ''}</li>`).join('')}</ul></section>`;
+  const indexFile = path.join(root, 'index.html');
+  const index = fs.readFileSync(indexFile, 'utf8');
+  const marker = /<!-- CONTACTS:START -->[\s\S]*?<!-- CONTACTS:END -->/;
+  if (!marker.test(index)) throw new Error('Missing homepage contact markers');
+  fs.writeFileSync(indexFile, index.replace(marker, `<!-- CONTACTS:START -->\n  ${contactHtml}\n  <!-- CONTACTS:END -->`));
   const money = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const names = [['领取即卖', 'instant'], ['目标倍数卖出', 'target'], ['一直持有', 'hold'], ['半卖半留', 'half']];
   const rows = names.map(([name, key]) => [name, money(r.totalsUSD[key]), money(r.refreshedOnly.totalsUSD[key]), money(r.firstDayCovered.totalsUSD[key])]);
@@ -27,8 +40,8 @@ module.exports = function buildPublicContent(r) {
   const headers = ['策略', `全样本（${r.rounds} 轮）`, `仅成功刷新（${r.refreshedOnly.rounds} 轮）`, `行情覆盖样本（${r.firstDayCovered.rounds} 轮）`];
   const summary = `全样本 ${r.targetHits}/${r.rounds} 轮触及目标倍数；持有总额最高的 5 轮占 ${(r.top5HoldShare * 100).toFixed(2)}%。金额为卖出现金加持仓估值。`;
   const md = [`# 币安 Alpha 空投策略回测报告 · ${r.snapshotDate}`, '', description, '', '## 数据覆盖', '', coverage, '', '## 模拟结果', '', '| ' + headers.join(' | ') + ' |', '|---|---:|---:|---:|', ...rows.map(row => '| ' + row.join(' | ') + ' |'), '', summary, '', '**' + limitation + '**', '', criteria, '', '## 回测方法', '', ...methods.map(s => '- ' + s), '', '## 局限', '', caveats, '', '## 数据来源', '', ...sources.map(([name, url, note]) => `- [${name}](${url})：${note}`), '', '## 入口', '', `- [交互回测器](${site}/)`, `- [HTML 报告](${site}/report)`, `- [机器可读结果](${site}/data/backtest_results.json)`, `- [缺失标的](${site}/data/fetch_failed.json)`, '', `生成时间：${r.generatedAt}。本报告为历史快照，非实时行情。`, ''].join('\n');
-  fs.writeFileSync(path.join(root, 'report.md'), md);
-  fs.writeFileSync(path.join(root, 'data', 'backtest_report.md'), md);
+  fs.writeFileSync(path.join(root, 'report.md'), md + '\n' + contactMarkdown + '\n');
+  fs.writeFileSync(path.join(root, 'data', 'backtest_report.md'), md + '\n' + contactMarkdown + '\n');
   const html = `<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alpha 空投回测报告 ${escape(r.snapshotDate)} · 方法与数据局限</title>
@@ -44,6 +57,7 @@ module.exports = function buildPublicContent(r) {
 <h2>回测方法</h2><ul>${methods.map(m => `<li>${escape(m)}</li>`).join('')}</ul>
 <h2>局限</h2><p>${escape(caveats)}</p><h2>数据来源</h2><ul>${sources.map(([name, url, note]) => `<li><a href="${escape(url)}">${escape(name)}</a>：${escape(note)}</li>`).join('')}</ul>
 <p><a href="/data/backtest_results.json">机器可读结果</a> · <a href="/data/fetch_failed.json">缺失标的清单</a></p>
+${contactHtml}
 <footer>生成时间：<time datetime="${escape(r.generatedAt)}">${escape(r.generatedAt)}</time>。本报告为历史快照，非实时行情。</footer></main></body></html>\n`;
   fs.writeFileSync(path.join(root, 'report.html'), html);
   fs.writeFileSync(path.join(root, 'llms.txt'), `# 币安 Alpha 空投策略回测器
@@ -64,6 +78,8 @@ module.exports = function buildPublicContent(r) {
 ## 项目说明
 
 - [源代码与使用说明](https://github.com/TimLiuDream/AlphaStrategy)：公开实现、数据更新命令与回测口径。
+
+${contactMarkdown}
 `);
   fs.writeFileSync(path.join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['/', '/report'].map(p => `  <url><loc>${site}${p}</loc><lastmod>${r.snapshotDate}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 };
