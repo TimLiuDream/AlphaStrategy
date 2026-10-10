@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alpha 空投回测报告 2026-10-10 · 方法与数据局限</title>
+<meta name="description" content="数据快照 2026-10-10；分发日期 2025-04-25 至 2026-10-09。目标倍数 2×，卖出滑点 1%，全部公链、2025/2026 分发。假设每轮完整领取，按真实每号分发数量计算；持有部分取各币最后日线收盘价估值。">
+<link rel="canonical" href="https://alpha-strategy.vercel.app/report"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="alternate" href="/report.md" type="text/markdown"><link rel="describedby" href="/llms.txt" type="text/plain">
+<style>body{margin:0;background:#0b0e14;color:#dbe2ef;font:16px/1.7 system-ui,sans-serif}main{max-width:960px;margin:auto;padding:32px 20px}a{color:#38bdf8}h1{font-size:clamp(24px,5vw,36px)}h2{margin-top:32px;color:#f0b90b}.table{overflow-x:auto}table{border-collapse:collapse;width:100%;white-space:nowrap}th,td{padding:12px;border-bottom:1px solid #232c3d;text-align:right}th:first-child,td:first-child{text-align:left}.warning{padding:16px;border-left:4px solid #f0b90b;background:#141922}footer{margin-top:32px;color:#9ca3af}</style>
+</head><body><main><nav><a href="/">返回交互回测器</a> · <a href="/report.md">Markdown 报告</a></nav>
+<h1>币安 Alpha 空投策略回测报告</h1><p>数据快照 2026-10-10；分发日期 2025-04-25 至 2026-10-09。目标倍数 2×，卖出滑点 1%，全部公链、2025/2026 分发。假设每轮完整领取，按真实每号分发数量计算；持有部分取各币最后日线收盘价估值。</p>
+<h2>数据覆盖</h2><p>共 388 个目标标的，378 个有历史行情，367 个在快照日成功刷新，11 个沿用旧行情；350 个匹配到分发记录。12 个标的的最后日线早于快照日超过 7 天。</p>
+<h2>模拟结果</h2><div class="table"><table><caption>卖出现金与持仓估值（美元）</caption><thead><tr><th scope="col">策略</th><th scope="col">全样本（433 轮）</th><th scope="col">仅成功刷新（423 轮）</th><th scope="col">行情覆盖样本（94 轮）</th></tr></thead><tbody><tr><th scope="row">领取即卖</th><td>$15,303.72</td><td>$15,257.65</td><td>$4,267.96</td></tr><tr><th scope="row">目标倍数卖出</th><td>$18,842.05</td><td>$18,825.56</td><td>$5,157.88</td></tr><tr><th scope="row">一直持有</th><td>$24,741.88</td><td>$24,728.72</td><td>$8,019.58</td></tr><tr><th scope="row">半卖半留</th><td>$20,022.80</td><td>$19,993.18</td><td>$6,143.77</td></tr></tbody></table></div>
+<p>全样本 210/433 轮触及目标倍数；持有总额最高的 5 轮占 55.31%。金额为卖出现金加持仓估值。</p><p class="warning"><strong>全样本 433 轮中，328 轮首根可用日线晚于分发日超过 14 天，首日卖价不可靠。全样本排名仅反映当前引擎与可用数据，无法证明完整历史的最优策略。</strong></p><p>行情覆盖样本仅包含本次成功刷新、首根取用日线距分发日不超过 1 天、末根日线距快照日不超过 1 天的轮次（94 轮）。这组样本也存在筛选偏差。不同样本列的总额不能直接比较。</p>
+<h2>回测方法</h2><ul><li>领取即卖：按分发附近首根可用日线开盘价卖出全部代币，并扣卖出滑点。</li><li>目标倍数卖出：目标为首日价的 2 倍；之后日线最高价触及目标则按目标价卖出并扣滑点，否则按最后日线收盘价估值。</li><li>一直持有：全部代币按最后日线收盘价估值。</li><li>半卖半留：一半首日卖出，一半按最后日线收盘价估值。</li></ul>
+<h2>局限</h2><p>历史最高价触及不保证真实限价单成交；未扣刷积分成本、领取 Gas、手续费及额外深度冲击。已退市或未收录的币可能缺失，存在幸存者偏差；池子迁移、低流动性和异常价格也可能影响结果。本工具用于历史模拟，不构成投资建议。</p><h2>数据来源</h2><ul><li><a href="https://www.binance.com/bapi/defi/v1/public/wallet-direct/buw/wallet/cex/alpha/all/token/list">币安 Alpha 公开代币接口</a>：代币清单与标的筛选</li><li><a href="https://alpha123.uk/api/historydata">alpha123 分发历史</a>：积分门槛与每号分发数量，按合约地址匹配</li><li><a href="https://www.geckoterminal.com/">GeckoTerminal</a>：链上池子日线 OHLCV，保留并合并已有历史</li></ul>
+<p><a href="/data/backtest_results.json">机器可读结果</a> · <a href="/data/fetch_failed.json">缺失标的清单</a></p>
+<footer>生成时间：<time datetime="2026-10-10T06:17:18.188Z">2026-10-10T06:17:18.188Z</time>。本报告为历史快照，非实时行情。</footer></main></body></html>

@@ -49,4 +49,5 @@ report.firstDayCovered = {
 };
 data.tokens = allTokens;
 fs.writeFileSync(path.join(root, 'data', 'backtest_results.json'), JSON.stringify(report, null, 2) + '\n');
+require('./build_public_content')(report);
 console.log(JSON.stringify(report, null, 2));

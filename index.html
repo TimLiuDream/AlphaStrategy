@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>币安 Alpha 空投策略回测器</title>
+<meta name="description" content="比较币安 Alpha 空投领取即卖、目标倍数卖出、一直持有和半卖半留四种策略，支持滑点、年份和公链筛选，提供历史数据、回测方法与数据局限说明。">
+<link rel="canonical" href="https://alpha-strategy.vercel.app/">
+<link rel="describedby" href="/llms.txt" type="text/plain">
+<link rel="alternate" href="/report.md" type="text/markdown" title="回测报告与数据口径">
+<meta property="og:type" content="website">
+<meta property="og:title" content="币安 Alpha 空投策略回测器">
+<meta property="og:description" content="四种空投处置策略对比，附数据覆盖、历史价格局限与静态回测报告。">
+<meta property="og:url" content="https://alpha-strategy.vercel.app/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"币安 Alpha 空投策略回测器","url":"https://alpha-strategy.vercel.app/","description":"比较币安 Alpha 空投四种处置策略的历史模拟工具，提供数据来源和局限说明。","applicationCategory":"FinanceApplication","operatingSystem":"Any","inLanguage":"zh-CN","isAccessibleForFree":true}
+</script>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <script src="./echarts.min.js"></script>
 <script src="./data.js"></script>
@@ -61,6 +72,7 @@
 <body>
 <div class="wrap">
   <h1>币安 Alpha <span class="y">空投策略</span>回测器</h1>
+  <p class="sub">比较领取即卖、目标倍数卖出、一直持有和半卖半留四种策略。假设每轮完整领取，结果为卖出现金与持仓估值，不代表实际净利润。<a href="/report">查看最新回测报告、数据来源与局限</a></p>
   <div class="sub" id="meta"></div>
 
   <div class="card panel">

@@ -34,6 +34,12 @@ node scripts/run_backtest.js          # 使用页面默认参数回测，输出 
 
 然后重新部署（git push 或 `vercel --prod`）。
 
+## 搜索与 AI 内容入口
+
+正式网址：https://alpha-strategy.vercel.app/ 。`node scripts/run_backtest.js` 会同步生成 `/report` 静态报告、`/report.md`、`/llms.txt` 和 `/sitemap.xml`，避免报告与回测结果不一致。`robots.txt` 允许公开内容抓取；首页包含描述、canonical 和 WebApplication 结构化数据。
+
+观察效果时，在 Vercel 可用的访问日志中按 `OAI-SearchBot`、`Claude-SearchBot` 等 User-Agent 区分搜索抓取，按 `GPTBot`、`ClaudeBot` 区分训练抓取。User-Agent 可以伪造，命中日志不代表被推荐。实际效果应结合来自 ChatGPT、Claude 等的访问来源、可复现的回答引用和用户反馈判断；Referrer 可能缺失。日志与分析可用性取决于 Vercel 项目设置及套餐。本项目未接入第三方访问追踪，也不保证收录或推荐。
+
 ## 数据口径
 
 | 项 | 说明 |
