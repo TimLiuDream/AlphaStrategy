@@ -1,6 +1,6 @@
 {
-  "snapshotDate": "2026-10-10",
-  "generatedAt": "2026-10-10T06:17:18.188Z",
+  "snapshotDate": "2026-10-25",
+  "generatedAt": "2026-10-25T05:48:07.711Z",
   "settings": {
     "targetMultiple": 2,
     "slippage": 0.01,
@@ -8,44 +8,40 @@
     "sellFeeUSD": 0.05
   },
   "coverage": {
-    "total": 388,
-    "withHistory": 378,
-    "withDrops": 350
+    "total": 391,
+    "withHistory": 382,
+    "withDrops": 351
   },
-  "rounds": 433,
+  "rounds": 434,
   "dateRange": [
     "2025-04-25",
     "2026-10-09"
   ],
   "totalsUSD": {
-    "instant": 15238.77042928744,
-    "target": 18788.24795378678,
-    "hold": 24698.58247936231,
-    "half": 19957.851454324886
+    "instant": 15372.821712612009,
+    "target": 18862.80130137505,
+    "hold": 25798.550739163966,
+    "half": 20574.83622588799
   },
-  "targetHits": 210,
-  "lateDataRounds": 328,
-  "refreshedTokens": 367,
+  "targetHits": 218,
+  "lateDataRounds": 325,
+  "refreshedTokens": 370,
   "staleCandleTokens": [
     {
       "symbol": "MILK",
       "lastCandle": "2026-09-16"
     },
     {
-      "symbol": "SOPH",
-      "lastCandle": "2026-09-20"
+      "symbol": "TGT",
+      "lastCandle": "2026-10-09"
     },
     {
-      "symbol": "RESOLV",
-      "lastCandle": "2026-09-20"
+      "symbol": "BRIC",
+      "lastCandle": "2026-10-09"
     },
     {
-      "symbol": "BOMB",
-      "lastCandle": "2026-09-19"
-    },
-    {
-      "symbol": "MORE",
-      "lastCandle": "2026-09-20"
+      "symbol": "NEWT",
+      "lastCandle": "2026-10-15"
     },
     {
       "symbol": "TANSSI",
@@ -56,75 +52,83 @@
       "lastCandle": "2026-09-19"
     },
     {
-      "symbol": "SHARDS",
-      "lastCandle": "2026-09-19"
+      "symbol": "PLAY",
+      "lastCandle": "2026-10-06"
     },
     {
-      "symbol": "MIRROR",
-      "lastCandle": "2026-09-19"
+      "symbol": "CELB",
+      "lastCandle": "2026-10-10"
     },
     {
-      "symbol": "ZKC",
-      "lastCandle": "2026-09-30"
+      "symbol": "SVSA",
+      "lastCandle": "2026-10-06"
     },
     {
       "symbol": "XNAP",
       "lastCandle": "2026-09-19"
     },
     {
+      "symbol": "OOOO",
+      "lastCandle": "2026-10-05"
+    },
+    {
       "symbol": "Sight",
       "lastCandle": "2026-09-19"
+    },
+    {
+      "symbol": "IP",
+      "lastCandle": "2026-10-09"
     }
   ],
-  "latestCandleDate": "2026-10-10",
-  "top5HoldShare": 0.5540058197847346,
+  "latestCandleDate": "2026-10-25",
+  "top5HoldShare": 0.5644767635103182,
   "top5Hold": [
     {
       "symbol": "BTW",
       "date": "2025-12-22",
-      "valueUSD": 5096.701599999999
+      "valueUSD": 5566.8420399999995
     },
     {
       "symbol": "AKE",
       "date": "2026-07-08",
-      "valueUSD": 4277.475834
+      "valueUSD": 4607.734654499999
     },
     {
       "symbol": "AKE",
       "date": "2025-08-21",
-      "valueUSD": 2749.78
+      "valueUSD": 2962.09
     },
     {
       "symbol": "M",
       "date": "2025-07-03",
-      "valueUSD": 998.093
+      "valueUSD": 917.787
     },
     {
-      "symbol": "UB",
-      "date": "2025-09-12",
-      "valueUSD": 561.1080000000001
+      "symbol": "CARV",
+      "date": "2026-04-30",
+      "valueUSD": 508.22873
     }
   ],
   "refreshedOnly": {
     "rounds": 423,
-    "targetHits": 208,
-    "lateDataRounds": 319,
+    "targetHits": 215,
+    "lateDataRounds": 317,
     "totalsUSD": {
-      "instant": 15194.19853283884,
-      "target": 18772.85613390018,
-      "hold": 24686.42114775571,
-      "half": 19929.73484029729
+      "instant": 15065.782956000607,
+      "target": 18850.84582901505,
+      "hold": 25790.257634757963,
+      "half": 20417.445295379293
     }
   },
   "firstDayCovered": {
     "criteria": "Successfully refreshed; first candle within one day of distribution; last candle within one day of snapshot",
-    "rounds": 94,
-    "targetHits": 44,
+    "rounds": 96,
+    "targetHits": 49,
     "totalsUSD": {
-      "instant": 4253.858686031602,
-      "target": 5146.277709918931,
-      "hold": 8010.18213636653,
-      "half": 6129.6704111990675
+      "instant": 4236.917252519602,
+      "target": 5459.191902219492,
+      "hold": 8427.090469885987,
+      "half": 6329.603861202794
     }
   }
 }
