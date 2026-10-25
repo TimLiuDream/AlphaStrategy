@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>币安 Alpha 空投策略回测器</title>
-<meta name="description" content="比较币安 Alpha 空投领取即卖、目标倍数卖出、一直持有和半卖半留四种策略，支持滑点、年份和公链筛选，提供历史数据、回测方法与数据局限说明。">
+<meta name="description" content="比较币安 Alpha 空投领取即卖、目标倍数卖出、一直持有和半卖半留四种策略，支持滑点、领取与卖出成本、年份和公链筛选，提供历史数据、回测方法与数据局限说明。">
 <link rel="canonical" href="https://alpha-strategy.vercel.app/">
 <link rel="describedby" href="/llms.txt" type="text/plain">
 <link rel="alternate" href="/report.md" type="text/markdown" title="回测报告与数据口径">
@@ -16,8 +16,18 @@
 {"@context":"https://schema.org","@type":"WebApplication","name":"币安 Alpha 空投策略回测器","url":"https://alpha-strategy.vercel.app/","description":"比较币安 Alpha 空投四种处置策略的历史模拟工具，提供数据来源和局限说明。","applicationCategory":"FinanceApplication","operatingSystem":"Any","inLanguage":"zh-CN","isAccessibleForFree":true}
 </script>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-<script src="./echarts.min.js"></script>
-<script src="./data.js"></script>
+<script>
+window.__snapPromise = (location.protocol === 'file:')
+  ? Promise.reject(Object.assign(new Error('file protocol'), { code: 'FILE' }))
+  : fetch('./data/snapshot.json').then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+window.__snapPromise.catch(function () {});
+</script>
+<script src="./scripts/snapshot_codec.js" defer></script>
+<script src="./scripts/backtest_engine.js" defer></script>
+<script src="./echarts.min.js" defer></script>
 <style>
   :root{
     --bg:#0b0e14; --card:#141922; --card2:#1a212e; --border:#232c3d;
@@ -67,14 +77,17 @@
   .num-pos{color:var(--green)} .num-neg{color:var(--red)}
   .cov{margin-top:10px;font-size:12px;color:var(--dim)}
   .cov b{color:var(--txt)}
+  .err{color:var(--red)}
+  code{color:var(--txt)}
   @media(max-width:760px){.chart{height:330px}.big{font-size:20px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>币安 Alpha <span class="y">空投策略</span>回测器</h1>
-  <p class="sub">比较领取即卖、目标倍数卖出、一直持有和半卖半留四种策略。假设每轮完整领取，结果为卖出现金与持仓估值，不代表实际净利润。<a href="/report">查看最新回测报告、数据来源与局限</a></p>
-  <div class="sub" id="meta"></div>
+  <p class="sub">比较领取即卖、目标倍数卖出、一直持有和半卖半留四种策略。假设每轮完整领取，结果为扣除可配置滑点与固定成本后的卖出现金与持仓估值，不代表实际净利润。<a href="/report">查看最新回测报告、数据来源与局限</a></p>
+  <div class="sub" id="meta">正在加载行情快照…</div>
+  <noscript><p class="err">需要启用 JavaScript 才能在浏览器里回测。不执行脚本也能阅读 <a href="/report">静态报告</a>。</p></noscript>
 
   <div class="card panel">
     <div class="field">
@@ -94,6 +107,14 @@
         <option value="0.02">2%</option>
         <option value="0.05">5%</option>
       </select>
+    </div>
+    <div class="field">
+      <label>每轮领取成本 USD</label>
+      <input id="claim" type="number" min="0" step="0.01" value="0.10">
+    </div>
+    <div class="field">
+      <label>每笔卖出成本 USD</label>
+      <input id="sellFee" type="number" min="0" step="0.01" value="0.05">
     </div>
     <div class="field">
       <label>参与年份</label>
@@ -140,12 +161,33 @@
 </div>
 
 <script>
-(function(){
-const D = window.ALPHA_DATA;
+document.addEventListener('DOMContentLoaded', function () { main(); });
+async function main() {
+  const meta = document.getElementById('meta');
+  try {
+    const raw = await window.__snapPromise;
+    if (typeof echarts === 'undefined' || typeof SnapshotCodec === 'undefined' || typeof BacktestEngine === 'undefined') {
+      throw new Error('页面脚本未加载完成');
+    }
+    start(SnapshotCodec.decodeSnapshot(raw));
+  } catch (e) {
+    console.error(e);
+    meta.className = 'sub err';
+    if (e && e.code === 'FILE') {
+      meta.innerHTML = '浏览器拦截了本地文件读取。请在项目目录运行 <code>node scripts/preview.js</code>，再用终端里的 http://localhost 地址打开。直接双击 index.html 无法加载行情快照。';
+    } else {
+      meta.textContent = '行情快照加载失败：' + (e && e.message ? e.message : e);
+    }
+  }
+}
+function start(D) {
 const $ = id => document.getElementById(id);
-const fmt$ = v => v >= 1000 ? '$' + Math.round(v).toLocaleString('en-US') : '$' + v.toFixed(2);
+const fmt$ = v => {
+  const sign = v < 0 ? '-' : '';
+  const a = Math.abs(v);
+  return sign + '$' + (a >= 1000 ? Math.round(a).toLocaleString('en-US') : a.toFixed(2));
+};
 const fmtX = v => v >= 100 ? v.toFixed(0) + '×' : v.toFixed(2) + '×';
-const dayOf = ms => Math.floor(ms / 86400000);
 const C = { instant:'#38bdf8', dbl:'#f0b90b', hold:'#a78bfa', half:'#34d399' };
 
 $('meta').textContent = `数据快照 ${D.snapshotDate} ｜ 期次：币安 Alpha 全量列表（bapi 接口）｜ 分发记录：alpha123.uk（${D.stats.withDrops} 个币有真实门槛/数量）｜ 价格：GeckoTerminal 日线 ｜ 样本 ${D.stats.withHistory}/${D.stats.total} 币`;
@@ -159,51 +201,18 @@ if (D.tokens.some(t => t.fetchedAt)) {
   const o = document.createElement('option'); o.value = ch; o.textContent = ch; $('chain').appendChild(o);
 });
 
-// —— 核心：单期回测。每「分发轮」为一期：有真实分发记录的按真实数量，无记录的币不参与 ——
-function firstIdxFrom(t, dayAnchor){
-  let i = t.c.findIndex(c => c[0] >= dayAnchor - 1);
-  if (i < 0) i = 0;
-  return i;
-}
-function evalToken(t, mult, units, slip, dayAnchor, drop){
-  const cs = t.c, i0 = firstIdxFrom(t, dayAnchor);
-  const o0 = cs[i0][1], hMax = Math.max(...cs.slice(i0).map(c => c[2])), cLast = cs[cs.length - 1][3];
-  if (!(o0 > 0) || !(cLast >= 0)) return null;
-  const target = mult * o0;
-  const hit = hMax >= target;
-  return {
-    t, i0, o0, hMax, cLast, drop, anchor: dayAnchor,
-    hit,
-    lateData: cs[i0][0] - dayAnchor > 14,           // 首根K线距锚点超2周，首日价口径存疑
-    vInstant: o0 * units * (1 - slip),
-    vDbl: hit ? target * units * (1 - slip) : cLast * units,
-    vHold: cLast * units,
-    vHalf: (o0 * (1 - slip) + cLast) * units / 2,
-    multMax: hMax / o0,
-    multNow: cLast / o0
-  };
-}
+// —— 核心回测在 scripts/backtest_engine.js，与单测、报告脚本同一份 ——
 function runBacktest(){
-  const mult = parseFloat($('mult').value), slip = parseFloat($('slip').value);
-  const y25 = $('y2025').checked, y26 = $('y2026').checked, ch = $('chain').value, onlyCex = $('onlyCex').checked;
-  const rows = [];
-  for (const t of D.tokens) {
-    if (!t.drops.length) continue;                       // 只回测有真实分发记录的轮次
-    if (ch && t.ch !== ch) continue;
-    if (onlyCex && !t.cex) continue;
-    for (const dp of t.drops) {
-      const anchor = Math.floor(new Date(dp.d + 'T00:00:00Z').getTime() / 86400000);
-      if (!isFinite(anchor)) continue;
-      const yd = new Date(anchor * 86400000).getFullYear();
-      if (yd === 2025 && !y25) continue;
-      if (yd === 2026 && !y26) continue;
-      if (dp.amt == null || dp.amt <= 0) continue;
-      const r = evalToken(t, mult, dp.amt, slip, anchor, dp);
-      if (r) rows.push(r);
-    }
-  }
-  rows.sort((a, b) => a.anchor - b.anchor);
-  return { mult, slip, rows };
+  return BacktestEngine.runBacktest(D, {
+    mult: $('mult').value,
+    slip: $('slip').value,
+    claimUsd: $('claim').value,
+    sellUsd: $('sellFee').value,
+    y2025: $('y2025').checked,
+    y2026: $('y2026').checked,
+    chain: $('chain').value,
+    onlyCex: $('onlyCex').checked
+  });
 }
 
 // —— 汇总卡 ——
@@ -215,10 +224,10 @@ function renderStats(bt){
   const n = rows.length || 1;
   const totalCoins = rows.reduce((a, r) => a + (r.drop ? r.drop.amt : 0), 0);
   const cards = [
-    { c: C.instant, tag: '策略A · 领取即卖', big: fmt$(sI), note: `平均每期 ${fmt$(sI / n)}（假设首日开盘价成交）` },
-    { c: C.dbl, tag: `策略B · 挂 ${bt.mult}× 卖单`, big: fmt$(sD), note: `达标 ${hits}/${n} 期（${(hits / n * 100).toFixed(0)}%），未达标按现价计值` },
-    { c: C.hold, tag: '策略C · 一直不卖', big: fmt$(sH), note: `按快照日现价估值，平均每期 ${fmt$(sH / n)}` },
-    { c: C.half, tag: '策略D · 卖一半留一半', big: fmt$(sF), note: `一半首日卖 + 一半拿到现在，等于 A 和 C 各取一半` },
+    { c: C.instant, tag: '策略A · 领取即卖', big: fmt$(sI), note: `平均每期 ${fmt$(sI / n)}（首日开盘价，已扣滑点与固定成本）` },
+    { c: C.dbl, tag: `策略B · 挂 ${bt.mult}× 卖单`, big: fmt$(sD), note: `达标 ${hits}/${n} 期（${(hits / n * 100).toFixed(0)}%）；未达标按现价计值且不扣卖出成本` },
+    { c: C.hold, tag: '策略C · 一直不卖', big: fmt$(sH), note: `按最后日线收盘价估值，只扣领取成本，平均每期 ${fmt$(sH / n)}` },
+    { c: C.half, tag: '策略D · 卖一半留一半', big: fmt$(sF), note: `一半首日卖出、一半持有；卖出固定成本只扣一次` },
     { c: sH >= sI ? C.half : '#f87171', tag: '持有 vs 立刻卖', big: (sH / sI).toFixed(2) + '×', note: `持有比立刻卖${sH >= sI ? '多' : '少'} ${fmt$(Math.abs(sH - sI))}` }
   ];
   $('stats').innerHTML = cards.map(c =>
@@ -227,7 +236,7 @@ function renderStats(bt){
   const top5Share = sH > 0 ? holdSorted.slice(0, 5).reduce((a, r) => a + r.vHold, 0) / sH * 100 : 0;
   const aboveOne = rows.filter(r => r.multNow > 1).length;
   const medNow = [...rows].sort((a, b) => a.multNow - b.multNow)[Math.floor(rows.length / 2)];
-  $('cov').innerHTML = `本轮回测 <b>${n}</b> 轮分发（每轮都按真实数量领取，合计 <b>${Math.round(totalCoins).toLocaleString()}</b> 个代币） ｜ 滑点 <b>${(bt.slip * 100).toFixed(0)}%</b><br>` +
+  $('cov').innerHTML = `本轮回测 <b>${n}</b> 轮分发（每轮都按真实数量领取，合计 <b>${Math.round(totalCoins).toLocaleString()}</b> 个代币） ｜ 滑点 <b>${(bt.slip * 100).toFixed(0)}%</b> ｜ 领取 <b>$${bt.claimUsd.toFixed(2)}</b>/轮 ｜ 卖出 <b>$${bt.sellUsd.toFixed(2)}</b>/笔<br>` +
     `持仓价值 TOP5 轮次占「不卖」总额 <b>${top5Share.toFixed(0)}%</b>${top5Share > 50 ? ' ⚠️ 高度集中，结论由极少数赢家主导' : ''} ｜ 当前仍 ≥1× 的轮次 <b>${aboveOne}/${n}</b>（${(aboveOne / n * 100).toFixed(0)}%） ｜ 中位数轮次现值 <b>${fmtX(medNow.multNow)}</b>`;
 }
 
@@ -336,7 +345,7 @@ function toggleDet(i){
     <div class="det-facts">
       <b>${t.s}</b>（${t.n}）· ${t.ch} · 分发日 ${new Date(r.anchor * 86400000).toISOString().slice(0, 10)}${r.drop && r.drop.pts != null ? ` · 门槛 <b>${r.drop.pts} 分</b> → 领 <b>${r.drop.amt.toLocaleString()}</b> 个` : ''}<br>
       首日开盘 <b>${fmt$(r.o0)}</b> → 现价 <b>${fmt$(r.cLast)}</b>（当前 <b>${fmtX(r.multNow)}</b>，历史最高 <b>${fmtX(r.multMax)}</b>）<br>
-      ${bt.mult}×挂单${r.hit ? '已触发 ✓' : '未触发 ✗（按现价计值）'} ｜ 半卖半持 = <b>${fmt$(r.vHalf)}</b>（${fmt$(r.vInstant / 2)} 已落袋 + ${fmt$(r.vHold / 2)} 持仓） ｜ ${t.cex ? '已上币安现货' + (t.cexn ? '：' + t.cexn : '') : '未上主站现货'}
+      ${bt.mult}×挂单${r.hit ? '已触发 ✓' : '未触发 ✗（按现价计值，不扣卖出成本）'} ｜ 半卖半持 = <b>${fmt$(r.vHalf)}</b> ｜ 本轮领取成本 ${fmt$(bt.claimUsd)}，卖出成本 ${fmt$(bt.sellUsd)}（仅实际卖出时扣除） ｜ ${t.cex ? '已上币安现货' + (t.cexn ? '：' + t.cexn : '') : '未上主站现货'}
     </div></div></td>`;
   tb.children[i].after(tr);
   setTimeout(() => tr.scrollIntoView({ block: 'nearest' }), 0);
@@ -346,7 +355,7 @@ function renderAll(){
   try {
     bt = runBacktest();
     renderStats(bt); renderC1(bt); renderC2(bt); renderTable(bt);
-    bt._all = bt; // for sparkSVG access
+    renderFoot();
   } catch(e) {
     $('cov').innerHTML = '<span style="color:#f87171">回测出错: ' + e.message + '<br>' + (e.stack || '').split('\n').slice(0, 4).join('<br>') + '</span>';
     console.error(e);
@@ -354,21 +363,23 @@ function renderAll(){
 }
 window.addEventListener('resize', () => { chart1 && chart1.resize(); chart2 && chart2.resize(); });
 ['mult', 'slip', 'y2025', 'y2026', 'chain', 'onlyCex'].forEach(id => $(id).addEventListener('change', renderAll));
-renderAll();
-
-$('foot').innerHTML = `
+['claim', 'sellFee'].forEach(id => $(id).addEventListener('input', renderAll));
+function renderFoot(){
+  $('foot').innerHTML = `
 <b>模型假设与口径</b><br>
 ① 回测单位是<b>每一轮分发</b>（来源 alpha123.uk，按合约地址匹配），假设每一轮你都完整抢到，数量按该轮真实每号分发量计；无分发记录的币不参与回测。<br>
 ② 每轮的首日价 = 分发日（±1 天）起第一根日线<b>开盘价</b>（多轮空投各自锚定自己那轮的日期）；◇ 表示首根 K 线距分发日超过 2 周，口径存疑。<br>
-③ 策略B = 领取即挂 ${$('mult').value}× 限价卖单；历史最高价触及则按目标价成交（扣滑点），未触及视为仍挂单、按快照现价计账面值。<br>
-④ 策略C 的持仓按快照日（${D.snapshotDate}）现价估值；曲线中的持有仓位同样按快照现价回算。<br>
-⑤ 策略D = 一半按首日开盘卖出、一半持有到快照日，即 A 与 C 的算术平均（不含再平衡）。<br>
-⑥ 未计入：领取 Gas/手续费、卖出深度不足导致的额外冲击、部分期次需先提币再卖等。<br>
+③ 策略B = 领取即挂 ${bt.mult}× 限价卖单；历史最高价触及则按目标价成交（扣滑点和一笔卖出成本），未触及视为仍挂单、按快照现价计账面值（不扣卖出成本）。<br>
+④ 策略C 的持仓按快照日（${D.snapshotDate}）现价估值，只扣领取成本；曲线中的持有仓位同样按最后一根收盘价回算。<br>
+⑤ 策略D = 一半按首日开盘卖出、一半持有到快照日。卖出固定成本只扣一次，所以卖出成本不为 0 时不等于 A 与 C 的算术平均。<br>
+⑥ 每轮扣除领取成本 <b>$${bt.claimUsd.toFixed(2)}</b>（gas/手续费的美元近似，默认按 BSC 一笔交易量级），每次实际卖出再扣 <b>$${bt.sellUsd.toFixed(2)}</b>。这不是逐链真实账单。仍未计入：刷积分成本、超出滑点的深度冲击、部分期次需先提币再卖。<br>
 ⑦ 个别低流动性期次的池子存在异常尖峰价（拉盘到极高再砸），会高估「翻倍卖」的成交概率，明细中最高倍数离谱的期次请自行甄别。<br>
 <b>数据来源</b>：币安 Alpha 全量代币列表（binance.com 公开 bapi 接口）；分发历史（积分门槛/数量）来自 alpha123.uk；日线行情来自 GeckoTerminal 公共 API（聚合链上主池）。价格历史缺失的币未纳入，当前覆盖 ${D.stats.withHistory}/${D.stats.total} 币，其中 ${D.stats.withDrops} 币有真实分发记录。<br>
 <b>免责</b>：本页面仅为历史数据的简化回测演示，不构成投资建议。Alpha 存在幸存者偏差——已归零/退市的币可能不在当前列表中，「一直不卖」策略的实际结果可能更差。
 `;
-})();
+}
+renderAll();
+}
 </script>
 </body>
 </html>

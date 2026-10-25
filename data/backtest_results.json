@@ -3,7 +3,9 @@
   "generatedAt": "2026-10-10T06:17:18.188Z",
   "settings": {
     "targetMultiple": 2,
-    "slippage": 0.01
+    "slippage": 0.01,
+    "claimFeeUSD": 0.1,
+    "sellFeeUSD": 0.05
   },
   "coverage": {
     "total": 388,
@@ -16,10 +18,10 @@
     "2026-10-09"
   ],
   "totalsUSD": {
-    "instant": 15303.720429287458,
-    "target": 18842.047953786787,
-    "hold": 24741.882479362324,
-    "half": 20022.801454324883
+    "instant": 15238.77042928744,
+    "target": 18788.24795378678,
+    "hold": 24698.58247936231,
+    "half": 19957.851454324886
   },
   "targetHits": 210,
   "lateDataRounds": 328,
@@ -75,32 +77,32 @@
     }
   ],
   "latestCandleDate": "2026-10-10",
-  "top5HoldShare": 0.5530564800561881,
+  "top5HoldShare": 0.5540058197847346,
   "top5Hold": [
     {
       "symbol": "BTW",
       "date": "2025-12-22",
-      "valueUSD": 5096.8016
+      "valueUSD": 5096.701599999999
     },
     {
       "symbol": "AKE",
       "date": "2026-07-08",
-      "valueUSD": 4277.575834
+      "valueUSD": 4277.475834
     },
     {
       "symbol": "AKE",
       "date": "2025-08-21",
-      "valueUSD": 2749.88
+      "valueUSD": 2749.78
     },
     {
       "symbol": "M",
       "date": "2025-07-03",
-      "valueUSD": 998.193
+      "valueUSD": 998.093
     },
     {
       "symbol": "UB",
       "date": "2025-09-12",
-      "valueUSD": 561.2080000000001
+      "valueUSD": 561.1080000000001
     }
   ],
   "refreshedOnly": {
@@ -108,10 +110,10 @@
     "targetHits": 208,
     "lateDataRounds": 319,
     "totalsUSD": {
-      "instant": 15257.648532838859,
-      "target": 18825.556133900187,
-      "hold": 24728.721147755732,
-      "half": 19993.184840297283
+      "instant": 15194.19853283884,
+      "target": 18772.85613390018,
+      "hold": 24686.42114775571,
+      "half": 19929.73484029729
     }
   },
   "firstDayCovered": {
@@ -119,10 +121,10 @@
     "rounds": 94,
     "targetHits": 44,
     "totalsUSD": {
-      "instant": 4267.958686031601,
-      "target": 5157.877709918929,
-      "hold": 8019.58213636653,
-      "half": 6143.770411199066
+      "instant": 4253.858686031602,
+      "target": 5146.277709918931,
+      "hold": 8010.18213636653,
+      "half": 6129.6704111990675
     }
   }
 }

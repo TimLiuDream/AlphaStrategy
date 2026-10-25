@@ -1,0 +1,6 @@
+# Source files used by the data pipeline. The site loads data/snapshot.json only.
+data/alpha_history.ndjson
+data/alpha_tokens_raw.json
+data/alpha123_history_raw.json
+data/fetch_done.json
+data/backtest_report.md
