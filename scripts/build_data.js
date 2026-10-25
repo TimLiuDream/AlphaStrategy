@@ -1,11 +1,16 @@
-// 合成网站数据 ../data.js: window.ALPHA_DATA = {...}
+// 合成网站数据 data/snapshot.json（压缩整数日K，页面异步 fetch）。
 // 来源1: data/alpha_tokens_raw.json (币安 Alpha 全量列表: 期次/合约/当前价)
 // 来源2: data/alpha_history.ndjson        (GeckoTerminal 日K)
 // 来源3: data/alpha123_history_raw.json   (alpha123.uk 历史分发记录: 积分门槛+每号数量, 按合约匹配)
+// 可选环境变量 SNAPSHOT_AT：覆盖生成时间（ISO），便于用同一份行情复现快照日。
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
+const { encodeSnapshot } = require('./snapshot_codec');
 const ROOT = path.join(__dirname, '..');
 const DATA = path.join(ROOT, 'data');
+const now = process.env.SNAPSHOT_AT ? new Date(process.env.SNAPSHOT_AT) : new Date();
+if (Number.isNaN(now.getTime())) throw new Error('SNAPSHOT_AT is not a valid date');
 const raw = JSON.parse(fs.readFileSync(path.join(DATA, 'alpha_tokens_raw.json'), 'utf8')).data;
 
 // alpha123 分发记录: 合约(小写) -> [{date, pts, amt}]
@@ -49,8 +54,8 @@ for (const line of lines) {
 tokens.sort((x, y) => x.t - y.t);
 
 const out = {
-  generatedAt: new Date().toISOString(),
-  snapshotDate: new Date().toISOString().slice(0, 10),
+  generatedAt: now.toISOString(),
+  snapshotDate: now.toISOString().slice(0, 10),
   sources: [
     '币安 Alpha 全量代币列表 (binance.com bapi 公开接口)',
     'GeckoTerminal 日线 OHLCV (api.geckoterminal.com)',
@@ -59,7 +64,16 @@ const out = {
   tokens,
   stats: { total: raw.filter(t => t.onlineAirdrop || t.onlineTge).length, withHistory: tokens.length, withDrops: tokens.filter(t => t.drops.length).length }
 };
-fs.writeFileSync(path.join(ROOT, 'data.js'), 'window.ALPHA_DATA=' + JSON.stringify(out) + ';');
-console.log(`tokens=${tokens.length}/${out.stats.total}, withDrops=${out.stats.withDrops}, file: ${(fs.statSync(path.join(ROOT, 'data.js')).size / 1048576).toFixed(2)} MB`);
+const encoded = encodeSnapshot(out);
+const snapPath = path.join(DATA, 'snapshot.json');
+const body = JSON.stringify(encoded);
+fs.writeFileSync(snapPath, body);
+const legacy = path.join(ROOT, 'data.js');
+if (fs.existsSync(legacy)) fs.unlinkSync(legacy);
+const gz = zlib.gzipSync(body).length;
+const br = zlib.brotliCompressSync(body).length;
+const rawCount = encoded.tokens.filter(t => t.raw).length;
+console.log(`tokens=${tokens.length}/${out.stats.total}, withDrops=${out.stats.withDrops}, rawCandles=${rawCount}`);
+console.log(`snapshot ${(body.length / 1024).toFixed(0)}KB, gzip ${(gz / 1024).toFixed(0)}KB, brotli ${(br / 1024).toFixed(0)}KB -> ${snapPath}`);
 const failed = fs.existsSync(path.join(DATA, 'fetch_failed.json')) ? JSON.parse(fs.readFileSync(path.join(DATA, 'fetch_failed.json'), 'utf8')) : [];
 console.log('fetch failed:', failed.length);

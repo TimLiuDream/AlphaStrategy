@@ -1,0 +1,59 @@
+# Daily market refresh. Pushes to the default branch only after tests pass.
+# GeckoTerminal is about 30 requests/minute; fetch_alpha_history.js waits 3.4s
+# between calls and keeps the previous candles when a token fails.
+name: Refresh market data
+
+on:
+  schedule:
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-market-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Refresh token list and airdrop history
+        run: node scripts/fetch_sources.js
+
+      - name: Refresh daily candles
+        run: node scripts/fetch_alpha_history.js --refresh
+
+      - name: Build snapshot
+        run: node scripts/build_data.js
+
+      - name: Test backtest
+        run: node scripts/test_backtest.js
+
+      - name: Regenerate report
+        run: node scripts/run_backtest.js
+
+      - name: Commit changed data and reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- data report.md report.html llms.txt sitemap.xml index.html
+          if git status --porcelain -- data.js | grep -q .; then
+            git add -A -- data.js
+          fi
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: refresh alpha market snapshot"
+          git push

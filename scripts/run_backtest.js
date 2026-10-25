@@ -1,23 +1,18 @@
 // Run the same engine as the page, with its default settings.
 const fs = require('fs');
 const path = require('path');
-const vm = require('vm');
 const root = path.join(__dirname, '..');
-const context = { window: {}, Date, Math, isFinite };
-vm.createContext(context);
-vm.runInContext(fs.readFileSync(path.join(root, 'data.js'), 'utf8'), context);
-const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const engine = html.slice(html.indexOf('function firstIdxFrom('), html.indexOf('// —— 汇总卡'));
-context.settings = { mult: { value: '2' }, slip: { value: '0.01' }, y2025: { checked: true }, y2026: { checked: true }, chain: { value: '' }, onlyCex: { checked: false } };
-vm.runInContext('const D = window.ALPHA_DATA; const $ = id => settings[id];\n' + engine, context);
-const bt = vm.runInContext('runBacktest()', context);
-const data = context.window.ALPHA_DATA;
+const { decodeSnapshot } = require('./snapshot_codec');
+const { runBacktest } = require('./backtest_engine');
+const data = decodeSnapshot(JSON.parse(fs.readFileSync(path.join(root, 'data', 'snapshot.json'), 'utf8')));
+const defaults = { mult: 2, slip: 0.01, claimUsd: 0.1, sellUsd: 0.05, y2025: true, y2026: true, chain: '', onlyCex: false };
+const bt = runBacktest(data, defaults);
 const total = key => bt.rows.reduce((sum, r) => sum + r[key], 0);
 const held = [...bt.rows].sort((a, b) => b.vHold - a.vHold);
 const report = {
   snapshotDate: data.snapshotDate,
   generatedAt: data.generatedAt,
-  settings: { targetMultiple: bt.mult, slippage: bt.slip },
+  settings: { targetMultiple: bt.mult, slippage: bt.slip, claimFeeUSD: bt.claimUsd, sellFeeUSD: bt.sellUsd },
   coverage: data.stats,
   rounds: bt.rows.length,
   dateRange: [bt.rows[0]?.drop.d, bt.rows.at(-1)?.drop.d],
@@ -32,7 +27,7 @@ const report = {
 };
 const allTokens = data.tokens;
 data.tokens = allTokens.filter(t => t.fetchedAt?.slice(0, 10) === data.snapshotDate);
-const fresh = vm.runInContext('runBacktest()', context);
+const fresh = runBacktest(data, defaults);
 report.refreshedOnly = {
   rounds: fresh.rows.length,
   targetHits: fresh.rows.filter(r => r.hit).length,
