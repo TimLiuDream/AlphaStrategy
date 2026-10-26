@@ -25,27 +25,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "OOOO",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "XNAP",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "SVSA",
+  "symbol": "ZKC",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "BARD",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "CELB",
+  "symbol": "SHARDS",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -65,7 +55,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "YALA",
+  "symbol": "TAKER",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -75,12 +65,22 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "BRIC",
+  "symbol": "MORE",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "F",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "PUNDIAI",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "LA",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -100,8 +100,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "MILK",
-  "chain": "BSC",
+  "symbol": "SXT",
+  "chain": "Base",
   "reason": "no_pool"
  }
 ]

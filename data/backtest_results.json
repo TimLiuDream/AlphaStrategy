@@ -1,6 +1,6 @@
 {
-  "snapshotDate": "2026-10-25",
-  "generatedAt": "2026-10-25T05:48:07.711Z",
+  "snapshotDate": "2026-10-26",
+  "generatedAt": "2026-10-26T06:59:16.047Z",
   "settings": {
     "targetMultiple": 2,
     "slippage": 0.01,
@@ -18,25 +18,17 @@
     "2026-10-09"
   ],
   "totalsUSD": {
-    "instant": 15372.821712612009,
-    "target": 18862.80130137505,
-    "hold": 25798.550739163966,
-    "half": 20574.83622588799
+    "instant": 16154.948699517014,
+    "target": 19616.651427501645,
+    "hold": 26218.769779230774,
+    "half": 21176.009239373918
   },
-  "targetHits": 218,
+  "targetHits": 219,
   "lateDataRounds": 325,
-  "refreshedTokens": 370,
+  "refreshedTokens": 369,
   "staleCandleTokens": [
     {
-      "symbol": "MILK",
-      "lastCandle": "2026-09-16"
-    },
-    {
       "symbol": "TGT",
-      "lastCandle": "2026-10-09"
-    },
-    {
-      "symbol": "BRIC",
       "lastCandle": "2026-10-09"
     },
     {
@@ -48,28 +40,20 @@
       "lastCandle": "2026-09-19"
     },
     {
-      "symbol": "YALA",
-      "lastCandle": "2026-09-19"
-    },
-    {
       "symbol": "PLAY",
       "lastCandle": "2026-10-06"
     },
     {
       "symbol": "CELB",
-      "lastCandle": "2026-10-10"
+      "lastCandle": "2026-10-14"
     },
     {
       "symbol": "SVSA",
-      "lastCandle": "2026-10-06"
+      "lastCandle": "2026-10-17"
     },
     {
       "symbol": "XNAP",
       "lastCandle": "2026-09-19"
-    },
-    {
-      "symbol": "OOOO",
-      "lastCandle": "2026-10-05"
     },
     {
       "symbol": "Sight",
@@ -80,55 +64,55 @@
       "lastCandle": "2026-10-09"
     }
   ],
-  "latestCandleDate": "2026-10-25",
-  "top5HoldShare": 0.5644767635103182,
+  "latestCandleDate": "2026-10-26",
+  "top5HoldShare": 0.5713227872867602,
   "top5Hold": [
     {
       "symbol": "BTW",
       "date": "2025-12-22",
-      "valueUSD": 5566.8420399999995
+      "valueUSD": 5360.984959999999
     },
     {
       "symbol": "AKE",
       "date": "2026-07-08",
-      "valueUSD": 4607.734654499999
+      "valueUSD": 4790.2006695
     },
     {
       "symbol": "AKE",
       "date": "2025-08-21",
-      "valueUSD": 2962.09
+      "valueUSD": 3079.39
     },
     {
       "symbol": "M",
       "date": "2025-07-03",
-      "valueUSD": 917.787
+      "valueUSD": 948.169
     },
     {
-      "symbol": "CARV",
-      "date": "2026-04-30",
-      "valueUSD": 508.22873
+      "symbol": "MIRROR",
+      "date": "2025-09-08",
+      "valueUSD": 800.636
     }
   ],
   "refreshedOnly": {
     "rounds": 423,
-    "targetHits": 215,
-    "lateDataRounds": 317,
+    "targetHits": 218,
+    "lateDataRounds": 316,
     "totalsUSD": {
-      "instant": 15065.782956000607,
-      "target": 18850.84582901505,
-      "hold": 25790.257634757963,
-      "half": 20417.445295379293
+      "instant": 15816.66008351101,
+      "target": 19584.616434647643,
+      "hold": 26187.60647331678,
+      "half": 20991.55827841392
     }
   },
   "firstDayCovered": {
     "criteria": "Successfully refreshed; first candle within one day of distribution; last candle within one day of snapshot",
-    "rounds": 96,
+    "rounds": 97,
     "targetHits": 49,
     "totalsUSD": {
-      "instant": 4236.917252519602,
-      "target": 5459.191902219492,
-      "hold": 8427.090469885987,
-      "half": 6329.603861202794
+      "instant": 4272.678413519602,
+      "target": 5450.009791838472,
+      "hold": 8513.369790346067,
+      "half": 6390.599101932836
     }
   }
 }
