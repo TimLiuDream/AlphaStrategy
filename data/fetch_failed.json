@@ -25,12 +25,37 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "OOOO",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "XNAP",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "ZKC",
+  "symbol": "SUBHUB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "BARD",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "AIA",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "VLR",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "PINGPONG",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -55,17 +80,12 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TAKER",
+  "symbol": "MORE",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "TANSSI",
-  "chain": "Ethereum",
-  "reason": "no_pool"
- },
- {
-  "symbol": "MORE",
+  "symbol": "BOMB",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -95,13 +115,13 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TGT",
-  "chain": "BSC",
+  "symbol": "SXT",
+  "chain": "Base",
   "reason": "no_pool"
  },
  {
-  "symbol": "SXT",
-  "chain": "Base",
+  "symbol": "MILK",
+  "chain": "BSC",
   "reason": "no_pool"
  }
 ]
