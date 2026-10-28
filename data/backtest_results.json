@@ -1,6 +1,6 @@
 {
-  "snapshotDate": "2026-10-27",
-  "generatedAt": "2026-10-27T07:15:20.963Z",
+  "snapshotDate": "2026-10-28",
+  "generatedAt": "2026-10-28T07:55:44.962Z",
   "settings": {
     "targetMultiple": 2,
     "slippage": 0.01,
@@ -18,19 +18,15 @@
     "2026-10-09"
   ],
   "totalsUSD": {
-    "instant": 16155.075790371015,
-    "target": 18831.095894852282,
-    "hold": 25593.093276986,
-    "half": 20863.234533678507
+    "instant": 16282.008650973914,
+    "target": 19176.484380307502,
+    "hold": 23374.27682865611,
+    "half": 19817.292739815002
   },
-  "targetHits": 219,
-  "lateDataRounds": 325,
-  "refreshedTokens": 366,
+  "targetHits": 223,
+  "lateDataRounds": 324,
+  "refreshedTokens": 376,
   "staleCandleTokens": [
-    {
-      "symbol": "PLAY",
-      "lastCandle": "2026-10-06"
-    },
     {
       "symbol": "CELB",
       "lastCandle": "2026-10-14"
@@ -40,67 +36,59 @@
       "lastCandle": "2026-10-17"
     },
     {
-      "symbol": "XNAP",
-      "lastCandle": "2026-09-19"
-    },
-    {
-      "symbol": "Sight",
-      "lastCandle": "2026-09-19"
-    },
-    {
       "symbol": "IP",
       "lastCandle": "2026-10-09"
     }
   ],
-  "latestCandleDate": "2026-10-27",
-  "top5HoldShare": 0.5555474495060497,
+  "latestCandleDate": "2026-10-28",
+  "top5HoldShare": 0.5397800807052991,
   "top5Hold": [
-    {
-      "symbol": "AKE",
-      "date": "2026-07-08",
-      "valueUSD": 4724.572015
-    },
     {
       "symbol": "BTW",
       "date": "2025-12-22",
-      "valueUSD": 4473.862679999999
+      "valueUSD": 5709.61544
+    },
+    {
+      "symbol": "AKE",
+      "date": "2026-07-08",
+      "valueUSD": 3208.7818730000004
     },
     {
       "symbol": "AKE",
       "date": "2025-08-21",
-      "valueUSD": 3037.2000000000003
-    },
-    {
-      "symbol": "Q",
-      "date": "2025-09-02",
-      "valueUSD": 1010.05
+      "valueUSD": 2062.76
     },
     {
       "symbol": "M",
       "date": "2025-07-03",
-      "valueUSD": 972.493
+      "valueUSD": 1128.68
+    },
+    {
+      "symbol": "CARV",
+      "date": "2026-04-30",
+      "valueUSD": 507.13172
     }
   ],
   "refreshedOnly": {
-    "rounds": 419,
-    "targetHits": 216,
-    "lateDataRounds": 313,
+    "rounds": 429,
+    "targetHits": 221,
+    "lateDataRounds": 319,
     "totalsUSD": {
-      "instant": 15876.438063133091,
-      "target": 18604.17594852428,
-      "hold": 25563.726394029996,
-      "half": 20709.607228581546
+      "instant": 15446.233782519908,
+      "target": 19170.090644535503,
+      "hold": 23369.63054995611,
+      "half": 19397.207166238004
     }
   },
   "firstDayCovered": {
     "criteria": "Successfully refreshed; first candle within one day of distribution; last candle within one day of snapshot",
-    "rounds": 97,
-    "targetHits": 49,
+    "rounds": 99,
+    "targetHits": 50,
     "totalsUSD": {
-      "instant": 4417.647974519603,
-      "target": 5457.541516859508,
-      "hold": 8405.097072950512,
-      "half": 6408.947523735054
+      "instant": 4499.780403719603,
+      "target": 5554.978557585759,
+      "hold": 6849.79494373686,
+      "half": 5672.312673728232
     }
   }
 }
