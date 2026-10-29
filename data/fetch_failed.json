@@ -20,27 +20,22 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "BARD",
+  "symbol": "COMMON",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "PINGPONG",
+  "symbol": "XNAP",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "MIRROR",
-  "chain": "Base",
+  "symbol": "SUBHUB",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "TOWN",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "FST",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -50,12 +45,27 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "TAKER",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "MORE",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
+  "symbol": "F",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "PUNDIAI",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "LA",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -67,6 +77,11 @@
  {
   "symbol": "PFVS",
   "chain": "Ethereum",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "TGT",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
