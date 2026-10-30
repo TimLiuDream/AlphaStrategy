@@ -20,12 +20,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "COMMON",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "XNAP",
+  "symbol": "Sight",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -35,7 +30,27 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "VLR",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MIRROR",
+  "chain": "Base",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SHARDS",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "TOWN",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "FST",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -45,12 +60,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TAKER",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "MORE",
+  "symbol": "PLAY",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -65,12 +75,12 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "LA",
+  "symbol": "HOME",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "ASRR",
+  "symbol": "LA",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -87,6 +97,11 @@
  {
   "symbol": "SXT",
   "chain": "Base",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "GM",
+  "chain": "BSC",
   "reason": "no_pool"
  }
 ]
