@@ -25,18 +25,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SUBHUB",
+  "symbol": "OOOO",
   "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "VLR",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "MIRROR",
-  "chain": "Base",
   "reason": "no_pool"
  },
  {
@@ -65,7 +55,12 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "F",
+  "symbol": "TANSSI",
+  "chain": "Ethereum",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "BRIC",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -75,12 +70,12 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "HOME",
+  "symbol": "LA",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "LA",
+  "symbol": "ASRR",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -90,17 +85,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TGT",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "SXT",
-  "chain": "Base",
-  "reason": "no_pool"
- },
- {
-  "symbol": "GM",
+  "symbol": "NXPC",
   "chain": "BSC",
   "reason": "no_pool"
  }
