@@ -30,17 +30,37 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "SUBHUB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "PINGPONG",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SWTCH",
+  "chain": "Solana",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MIRROR",
+  "chain": "Base",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "SHARDS",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "TOWN",
+  "symbol": "XLAB",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "FST",
+  "symbol": "TOWN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -60,7 +80,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "BRIC",
+  "symbol": "F",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -71,6 +91,11 @@
  },
  {
   "symbol": "LA",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "BDXN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -87,6 +112,11 @@
  {
   "symbol": "NXPC",
   "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SXT",
+  "chain": "Base",
   "reason": "no_pool"
  }
 ]
