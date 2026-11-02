@@ -30,18 +30,23 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SUBHUB",
+  "symbol": "TYCOON",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "PINGPONG",
+  "symbol": "COMMON",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "SWTCH",
-  "chain": "Solana",
+  "symbol": "XNAP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "VLR",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
@@ -55,12 +60,12 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "XLAB",
+  "symbol": "TOWN",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "TOWN",
+  "symbol": "FST",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -71,6 +76,11 @@
  },
  {
   "symbol": "PLAY",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "YALA",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -90,16 +100,6 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "LA",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "BDXN",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "ASRR",
   "chain": "BSC",
   "reason": "no_pool"
@@ -107,16 +107,6 @@
  {
   "symbol": "PFVS",
   "chain": "Ethereum",
-  "reason": "no_pool"
- },
- {
-  "symbol": "NXPC",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "SXT",
-  "chain": "Base",
   "reason": "no_pool"
  }
 ]
