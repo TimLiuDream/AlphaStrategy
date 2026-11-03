@@ -30,28 +30,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TYCOON",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "COMMON",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "XNAP",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "VLR",
   "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "MIRROR",
-  "chain": "Base",
   "reason": "no_pool"
  },
  {
@@ -65,22 +45,12 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "FST",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "BSU",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "PLAY",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "YALA",
+  "symbol": "TAKER",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -100,6 +70,11 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "HOME",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "ASRR",
   "chain": "BSC",
   "reason": "no_pool"
@@ -107,6 +82,21 @@
  {
   "symbol": "PFVS",
   "chain": "Ethereum",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "NXPC",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SXT",
+  "chain": "Base",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MILK",
+  "chain": "BSC",
   "reason": "no_pool"
  }
 ]
