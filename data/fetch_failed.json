@@ -30,8 +30,33 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "VLR",
+  "symbol": "TYCOON",
   "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "XNAP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SUBHUB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "KLINK",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SWTCH",
+  "chain": "Solana",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MIRROR",
+  "chain": "Base",
   "reason": "no_pool"
  },
  {
@@ -40,12 +65,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TOWN",
+  "symbol": "FST",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "BSU",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "PLAY",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -92,11 +122,6 @@
  {
   "symbol": "SXT",
   "chain": "Base",
-  "reason": "no_pool"
- },
- {
-  "symbol": "MILK",
-  "chain": "BSC",
   "reason": "no_pool"
  }
 ]
