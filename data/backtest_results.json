@@ -1,6 +1,6 @@
 {
-  "snapshotDate": "2026-11-04",
-  "generatedAt": "2026-11-04T08:40:09.239Z",
+  "snapshotDate": "2026-11-05",
+  "generatedAt": "2026-11-05T09:00:53.402Z",
   "settings": {
     "targetMultiple": 2,
     "slippage": 0.01,
@@ -18,73 +18,81 @@
     "2026-10-09"
   ],
   "totalsUSD": {
-    "instant": 16621.199966170396,
-    "target": 19114.08032441098,
-    "hold": 15609.598208623145,
-    "half": 16104.474087396771
+    "instant": 17566.696723870395,
+    "target": 18976.251264106984,
+    "hold": 15567.181541367525,
+    "half": 16556.014132618944
   },
-  "targetHits": 223,
+  "targetHits": 222,
   "lateDataRounds": 324,
-  "refreshedTokens": 366,
+  "refreshedTokens": 372,
   "staleCandleTokens": [
     {
       "symbol": "TANSSI",
       "lastCandle": "2026-10-26"
     },
     {
+      "symbol": "SHARDS",
+      "lastCandle": "2026-10-28"
+    },
+    {
+      "symbol": "Sight",
+      "lastCandle": "2026-10-28"
+    },
+    {
       "symbol": "IP",
       "lastCandle": "2026-10-09"
     }
   ],
-  "latestCandleDate": "2026-11-04",
-  "top5HoldShare": 0.36353133219759726,
+  "latestCandleDate": "2026-11-05",
+  "top5HoldShare": 0.35536503109438455,
   "top5Hold": [
     {
       "symbol": "BTW",
       "date": "2025-12-22",
-      "valueUSD": 3424.14896
+      "valueUSD": 3335.8831999999998
     },
     {
       "symbol": "M",
       "date": "2025-07-03",
-      "valueUSD": 848.8
+      "valueUSD": 822.617
     },
     {
       "symbol": "CARV",
       "date": "2026-04-30",
-      "valueUSD": 507.78299
-    },
-    {
-      "symbol": "AKE",
-      "date": "2026-07-08",
-      "valueUSD": 474.75808185
+      "valueUSD": 508.97383999999994
     },
     {
       "symbol": "UB",
       "date": "2025-09-12",
-      "valueUSD": 419.08799999999997
+      "valueUSD": 444.64399999999995
+    },
+    {
+      "symbol": "ZAMA",
+      "date": "2026-01-29",
+      "valueUSD": 419.9139125
     }
   ],
   "refreshedOnly": {
-    "rounds": 420,
-    "targetHits": 216,
-    "lateDataRounds": 310,
+    "rounds": 426,
+    "targetHits": 218,
+    "lateDataRounds": 316,
     "totalsUSD": {
-      "instant": 15447.668048463562,
-      "target": 18781.77979769596,
-      "hold": 15535.02825265211,
-      "half": 15480.848150557835
+      "instant": 17415.512875152075,
+      "target": 18865.120759958983,
+      "hold": 15542.390224897526,
+      "half": 16468.301550024786
     }
   },
   "firstDayCovered": {
     "criteria": "Successfully refreshed; first candle within one day of distribution; last candle within one day of snapshot",
     "rounds": 99,
-    "targetHits": 49,
+    "targetHits": 50,
     "totalsUSD": {
-      "instant": 4514.720143259603,
-      "target": 5407.901266413621,
-      "hold": 3907.1644659411186,
-      "half": 4208.467304600362
+      "instant": 4380.360689459602,
+      "target": 5506.184241858152,
+      "hold": 3874.2583781202507,
+      "half": 4124.834533789926
     }
   }
 }
