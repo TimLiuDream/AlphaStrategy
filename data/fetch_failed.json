@@ -30,22 +30,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SUBHUB",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "VLR",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "SHARDS",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "FST",
+  "symbol": "TOWN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -55,18 +40,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TAKER",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "TANSSI",
   "chain": "Ethereum",
-  "reason": "no_pool"
- },
- {
-  "symbol": "BRIC",
-  "chain": "BSC",
   "reason": "no_pool"
  },
  {
@@ -76,6 +51,11 @@
  },
  {
   "symbol": "PUNDIAI",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "LA",
   "chain": "BSC",
   "reason": "no_pool"
  },
