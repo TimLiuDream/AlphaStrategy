@@ -30,12 +30,42 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "SUBHUB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "BARD",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "VLR",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SHARDS",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "U",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "TOWN",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "BSU",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "PLAY",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -72,6 +102,11 @@
  {
   "symbol": "SXT",
   "chain": "Base",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MILK",
+  "chain": "BSC",
   "reason": "no_pool"
  }
 ]
