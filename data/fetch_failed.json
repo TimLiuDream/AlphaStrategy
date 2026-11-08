@@ -50,22 +50,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "U",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "TOWN",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "BSU",
+  "symbol": "FST",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "PLAY",
+  "symbol": "BSU",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -85,6 +80,16 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "RESOLV",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "HOME",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "LA",
   "chain": "BSC",
   "reason": "no_pool"
@@ -100,8 +105,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SXT",
-  "chain": "Base",
+  "symbol": "NXPC",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
