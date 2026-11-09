@@ -15,6 +15,11 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "KIN",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "FOGO",
   "chain": "BSC",
   "reason": "no_pool"
@@ -30,11 +35,6 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SUBHUB",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "BARD",
   "chain": "BSC",
   "reason": "no_pool"
@@ -45,22 +45,22 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SHARDS",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "TOWN",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "FST",
+  "symbol": "BSU",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "BSU",
+  "symbol": "PLAY",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "LN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -90,18 +90,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "LA",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "ASRR",
   "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "PFVS",
-  "chain": "Ethereum",
   "reason": "no_pool"
  },
  {
@@ -110,8 +100,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "MILK",
-  "chain": "BSC",
+  "symbol": "SXT",
+  "chain": "Base",
   "reason": "no_pool"
  }
 ]

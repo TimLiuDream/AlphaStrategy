@@ -1,6 +1,6 @@
 {
-  "snapshotDate": "2026-11-08",
-  "generatedAt": "2026-11-08T08:20:04.608Z",
+  "snapshotDate": "2026-11-09",
+  "generatedAt": "2026-11-09T08:50:43.909Z",
   "settings": {
     "targetMultiple": 2,
     "slippage": 0.01,
@@ -9,23 +9,23 @@
   },
   "coverage": {
     "total": 391,
-    "withHistory": 385,
-    "withDrops": 354
+    "withHistory": 386,
+    "withDrops": 355
   },
-  "rounds": 437,
+  "rounds": 438,
   "dateRange": [
     "2025-04-25",
     "2026-10-09"
   ],
   "totalsUSD": {
-    "instant": 17566.276832569467,
-    "target": 18878.371663005702,
-    "hold": 15985.410074160009,
-    "half": 16764.918453364746
+    "instant": 17566.29838224447,
+    "target": 18808.46368684099,
+    "hold": 15560.386599562631,
+    "half": 16552.392490903552
   },
-  "targetHits": 222,
-  "lateDataRounds": 323,
-  "refreshedTokens": 368,
+  "targetHits": 223,
+  "lateDataRounds": 324,
+  "refreshedTokens": 370,
   "staleCandleTokens": [
     {
       "symbol": "ASRR",
@@ -40,6 +40,10 @@
       "lastCandle": "2026-10-26"
     },
     {
+      "symbol": "LN",
+      "lastCandle": "2026-11-01"
+    },
+    {
       "symbol": "OOOO",
       "lastCandle": "2026-10-29"
     },
@@ -52,55 +56,55 @@
       "lastCandle": "2026-10-09"
     }
   ],
-  "latestCandleDate": "2026-11-08",
-  "top5HoldShare": 0.40398421768916326,
+  "latestCandleDate": "2026-11-09",
+  "top5HoldShare": 0.3869651577274595,
   "top5Hold": [
     {
       "symbol": "BTW",
       "date": "2025-12-22",
-      "valueUSD": 3815.0493600000004
-    },
-    {
-      "symbol": "AKE",
-      "date": "2026-07-08",
-      "valueUSD": 810.05377325
+      "valueUSD": 3584.9738
     },
     {
       "symbol": "M",
       "date": "2025-07-03",
-      "valueUSD": 805.361
+      "valueUSD": 761.458
     },
     {
       "symbol": "AKE",
-      "date": "2025-08-21",
-      "valueUSD": 520.7149999999999
+      "date": "2026-07-08",
+      "valueUSD": 710.3756848
     },
     {
       "symbol": "CARV",
       "date": "2026-04-30",
-      "valueUSD": 506.67425
+      "valueUSD": 507.88397
+    },
+    {
+      "symbol": "AKE",
+      "date": "2025-08-21",
+      "valueUSD": 456.636
     }
   ],
   "refreshedOnly": {
-    "rounds": 421,
-    "targetHits": 217,
-    "lateDataRounds": 311,
+    "rounds": 424,
+    "targetHits": 220,
+    "lateDataRounds": 314,
     "totalsUSD": {
-      "instant": 16107.829226724147,
-      "target": 18482.025171791698,
-      "hold": 15884.22000314601,
-      "half": 15985.499614935086
+      "instant": 16102.118345803467,
+      "target": 18421.443336578992,
+      "hold": 15465.844079452632,
+      "half": 15773.38121262805
     }
   },
   "firstDayCovered": {
     "criteria": "Successfully refreshed; first candle within one day of distribution; last candle within one day of snapshot",
-    "rounds": 97,
-    "targetHits": 49,
+    "rounds": 98,
+    "targetHits": 48,
     "totalsUSD": {
-      "instant": 4256.954744459602,
-      "target": 5241.011352934792,
-      "hold": 3979.84622259599,
-      "half": 4115.975483527796
+      "instant": 4406.447249009602,
+      "target": 5132.1513903556615,
+      "hold": 3892.307159896958,
+      "half": 4146.927204453281
     }
   }
 }
