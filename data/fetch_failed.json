@@ -10,7 +10,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "IP",
+  "symbol": "KIN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -25,17 +25,12 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "XNAP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "SUBHUB",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "BARD",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "ZKC",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -60,7 +55,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "PLAY",
+  "symbol": "TAKER",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -70,17 +65,12 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "F",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "PUNDIAI",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "RESOLV",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "HOME",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -92,6 +82,11 @@
  {
   "symbol": "NXPC",
   "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SXT",
+  "chain": "Base",
   "reason": "no_pool"
  },
  {
