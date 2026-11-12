@@ -9,7 +9,7 @@ const DATA = path.join(ROOT, 'data');
 const refresh = process.argv.includes('--refresh');
 
 const raw = JSON.parse(fs.readFileSync(path.join(DATA, 'alpha_tokens_raw.json'), 'utf8')).data;
-const NET = { BSC: 'bsc', Base: 'base', Ethereum: 'eth', Arbitrum: 'arbitrum', Solana: 'solana', Sui: 'sui-network', Linea: 'linea', Sonic: 'sonic' };
+const { NET } = require('./chains');
 const targets = raw.filter(t => (t.onlineAirdrop || t.onlineTge) && NET[t.chainName]);
 console.log(`targets: ${targets.length}`);
 
@@ -52,7 +52,7 @@ async function main() {
     if (!groups.has(net)) groups.set(net, []);
     groups.get(net).push(t);
   }
-  const poolMap = new Map(); // `${net}:${addr}` -> pool address
+  const poolMap = new Map(); // `${net}:${addr小写}` -> pool address；两侧统一小写，兼容 Sui 类型地址（::module::TYPE）与 EVM/Solana 大小写差异
   for (const [net, list] of groups) {
     for (let i = 0; i < list.length; i += 30) {
       const batch = list.slice(i, i + 30);
@@ -64,7 +64,7 @@ async function main() {
           if (rel && rel[0]) {
             const pid = rel[0].id; // net_0x...
             const addr = pid.slice(pid.indexOf('_') + 1);
-            poolMap.set(`${net}:${tk.id.split('_').pop()}`, addr);
+            poolMap.set(`${net}:${tk.id.split('_').pop().toLowerCase()}`, addr);
           }
         }
         console.log(`[pools] ${net} batch ${Math.floor(i / 30) + 1}: +${j.data.length}`);
@@ -79,7 +79,7 @@ async function main() {
   for (const t of todo) {
     const net = NET[t.chainName];
     const key = `${net}:${t.contractAddress.toLowerCase()}`;
-    const pool = poolMap.get(key) || poolMap.get(`${net}:${t.contractAddress}`);
+    const pool = poolMap.get(key);
     n++;
     if (!pool) { failed.push({ symbol: t.symbol, chain: t.chainName, reason: 'no_pool' }); console.log(`[${n}/${todo.length}] ${t.symbol} NO POOL`); continue; }
     const j = await get(`https://api.geckoterminal.com/api/v2/networks/${net}/pools/${pool}/ohlcv/day?aggregate=1&limit=1000&currency=usd`);

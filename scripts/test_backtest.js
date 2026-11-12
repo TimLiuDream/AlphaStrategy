@@ -1,7 +1,7 @@
 // 回测引擎与快照编解码单测。引擎口径以 scripts/backtest_engine.js 为准（页面同样引用它）。
 const fs = require('fs');
 const path = require('path');
-const { evalToken, runBacktest } = require('./backtest_engine');
+const { evalToken, runBacktest, dropYears } = require('./backtest_engine');
 const { encodeSnapshot, decodeSnapshot } = require('./snapshot_codec');
 const dayOf = ms => Math.floor(ms / 86400000);
 const D = 86400000;
@@ -50,6 +50,18 @@ eq('lateData(数据来晚)', r.lateData ? 1 : 0, 1);
 const t3 = { t: 40 * D, c: [[10, 5, 5, 5], [11, 5, 6, 5]] };
 r = evalToken(t3, 2, 100, 0, 40, null);
 eq('回退首根', r.vInstant / 100, 5);
+eq('preOnly(全是旧K线)', r.preOnly ? 1 : 0, 1);
+// 用例1b(回归): 分发前一天(day9)的K线不得作为首日价（旧版 ±1 容差会用到领取前价格）
+const t1b = { t: 10 * D, c: [[9, 7, 8, 7], [10, 1, 2, 1.5], [12, 1.2, 1.3, 0.5]] };
+r = evalToken(t1b, 2, 100, 0, 10, null);
+console.log('用例1b 首日跳过分发前K线:');
+eq('首日开盘(day10=1)', r.vInstant / 100, 1);
+// 用例5b(回归): 单根K线（刚发行）也能参与回测
+const t4 = { t: 10 * D, c: [[10, 1, 1.5, 0.8]] };
+r = evalToken(t4, 2, 100, 0, 10, null);
+console.log('用例5b 单根K线:');
+eq('vInstant', r.vInstant, 100);
+eq('vHold', r.vHold, 80);
 
 console.log('用例6 固定成本:');
 r = evalToken(t1, 2, 1000, 0, dayOf(t1.t), null, 0.1, 0.05);
@@ -78,6 +90,33 @@ eq('立刻卖合计', bt.rows.reduce((s, row) => s + row.vInstant, 0), 299.4);
 eq('不卖合计', bt.rows.reduce((s, row) => s + row.vHold, 0), 199.6);
 eq('第一轮翻倍成交', bt.rows[0].hit ? 1 : 0, 1);
 eq('第二轮未到 2x', bt.rows[1].hit ? 1 : 0, 0);
+
+console.log('用例7b 年份白名单与口径开关:');
+const ad = s => Math.floor(new Date(s + 'T00:00:00Z').getTime() / D);
+const mk = (drops, c, extra) => ({ s: 'X', n: 'X', ch: 'BSC', cex: false, cexn: '', drops, c, ...extra });
+const yTokens = {
+  tokens: [
+    mk([{ d: '2024-12-01', pts: 100, amt: 10 }], [[ad('2024-12-01'), 1, 2, 1]]),
+    mk([{ d: '2025-01-15', pts: 100, amt: 10 }], [[ad('2025-01-15'), 1, 2, 1]]),
+    mk([{ d: '2026-03-01', pts: 100, amt: 10 }], [[ad('2026-03-01'), 1, 2, 1]]),
+    mk([{ d: 'bad-date', pts: 100, amt: 10 }], [[10, 1, 2, 1]]),                    // 非法日期 → 跳过
+    mk([{ d: '2025-02-01', pts: 100, amt: 0 }], [[ad('2025-02-01'), 1, 2, 1]]),     // 数量0 → 跳过
+  ]
+};
+const yBase = { mult: 2, slip: 0, chain: '', onlyCex: false };
+eq('dropYears 升序', dropYears(yTokens.tokens).join(','), '2024,2025,2026');
+eq('勾选2025/2026时2024被排除', runBacktest(yTokens, { ...yBase, years: [2025, 2026] }).rows.length, 2);
+eq('years全不勾=无轮次', runBacktest(yTokens, { ...yBase, years: [] }).rows.length, 0);
+eq('旧版y2025/y2026布尔口径仍兼容(2024不受控混入)', runBacktest(yTokens, { ...yBase, y2025: true, y2026: false }).rows.length, 2);
+const cTokens = {
+  tokens: [
+    mk([{ d: '2025-01-15', pts: 100, amt: 10 }], [[ad('2025-01-15'), 1, 2, 1]]),   // 干净
+    mk([{ d: '2025-01-15', pts: 100, amt: 10 }], [[ad('2025-02-10'), 1, 2, 1]]),   // ◇ lateData（晚26天）
+    mk([{ d: '2025-01-15', pts: 100, amt: 10 }], [[ad('2024-12-01'), 1, 2, 1]]),   // ◆ preOnly
+  ]
+};
+eq('cleanOff全算', runBacktest(cTokens, { ...yBase, years: dropYears(cTokens.tokens) }).rows.length, 3);
+eq('cleanOnly剔除◇与◆', runBacktest(cTokens, { ...yBase, years: dropYears(cTokens.tokens), cleanOnly: true }).rows.length, 1);
 
 console.log('用例8 快照往返:');
 const sample = {

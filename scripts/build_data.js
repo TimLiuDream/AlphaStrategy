@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const { encodeSnapshot } = require('./snapshot_codec');
+const { NET } = require('./chains');
 const ROOT = path.join(__dirname, '..');
 const DATA = path.join(ROOT, 'data');
 const now = process.env.SNAPSHOT_AT ? new Date(process.env.SNAPSHOT_AT) : new Date();
@@ -34,14 +35,13 @@ const lines = fs.readFileSync(path.join(DATA, 'alpha_history.ndjson'), 'utf8').s
 for (const line of lines) {
   try {
     const r = JSON.parse(line);
-    if (!r.candles || r.candles.length < 2) continue;
+    if (!r.candles || r.candles.length < 1) continue; // 单根K线也保留（刚发行即无行情的极端样本不该静默消失）
     if (seen.has(r.symbol + '@' + r.contract)) continue;
     seen.add(r.symbol + '@' + r.contract);
     const cexCoinName = r.cexCoinName || (raw.find(x => x.symbol === r.symbol && x.contractAddress.toLowerCase() === String(r.contract).toLowerCase()) || {}).cexCoinName || '';
     tokens.push({
       s: r.symbol, n: r.name, ch: r.chain, a: r.contract,
       t: r.listingTime, cex: !!r.listingCex, cexn: cexCoinName,
-      pn: parseFloat(r.priceNow),
       fetchedAt: r.fetchedAt || null,
       drops: dropsByAddr.get(String(r.contract).toLowerCase()) || [],
       c: r.candles.filter(b => b[1] > 0 && b[2] > 0 && b[3] != null).map(b => [Math.round(b[0] * 1000 / 86400000), // 秒→天序号 (epoch days)
@@ -62,7 +62,8 @@ const out = {
     'alpha123.uk /api/historydata 历史分发记录 (积分门槛+每号数量)'
   ],
   tokens,
-  stats: { total: raw.filter(t => t.onlineAirdrop || t.onlineTge).length, withHistory: tokens.length, withDrops: tokens.filter(t => t.drops.length).length }
+  // total 与抓取目标同口径：空投/TGE 标记 && 链在 NET 映射内（GeckoTerminal 收录的链）
+  stats: { total: raw.filter(t => (t.onlineAirdrop || t.onlineTge) && NET[t.chainName]).length, withHistory: tokens.length, withDrops: tokens.filter(t => t.drops.length).length }
 };
 const encoded = encodeSnapshot(out);
 const snapPath = path.join(DATA, 'snapshot.json');

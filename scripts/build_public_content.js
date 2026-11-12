@@ -19,15 +19,15 @@ module.exports = function buildPublicContent(r) {
   if (!marker.test(index)) throw new Error('Missing homepage contact markers');
   fs.writeFileSync(indexFile, index.replace(marker, `<!-- CONTACTS:START -->\n  ${contactHtml}\n  <!-- CONTACTS:END -->`));
   const money = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const names = [['领取即卖', 'instant'], ['目标倍数卖出', 'target'], ['一直持有', 'hold'], ['半卖半留', 'half']];
+  const names = [['领取即卖', 'instant'], ['翻倍卖', 'target'], ['一直持有', 'hold'], ['半卖半留', 'half']];
   const rows = names.map(([name, key]) => [name, money(r.totalsUSD[key]), money(r.refreshedOnly.totalsUSD[key]), money(r.firstDayCovered.totalsUSD[key])]);
   const feeText = n => Number(n).toFixed(2);
   const description = `数据快照 ${r.snapshotDate}；分发日期 ${r.dateRange[0]} 至 ${r.dateRange[1]}。目标倍数 ${r.settings.targetMultiple}×，卖出滑点 ${r.settings.slippage * 100}%，每轮领取成本 $${feeText(r.settings.claimFeeUSD)}，每笔卖出固定成本 $${feeText(r.settings.sellFeeUSD)}，全部公链、2025/2026 分发。假设每轮完整领取，按真实每号分发数量计算；持有部分取各币最后日线收盘价估值，并扣除领取成本。`;
   const coverage = `共 ${r.coverage.total} 个目标标的，${r.coverage.withHistory} 个有历史行情，${r.refreshedTokens} 个在快照日成功刷新，${r.coverage.withHistory - r.refreshedTokens} 个沿用旧行情；${r.coverage.withDrops} 个匹配到分发记录。${r.staleCandleTokens.length} 个标的的最后日线早于快照日超过 7 天。`;
-  const limitation = `全样本 ${r.rounds} 轮中，${r.lateDataRounds} 轮首根可用日线晚于分发日超过 14 天，首日卖价不可靠。全样本排名仅反映当前引擎与可用数据，无法证明完整历史的最优策略。`;
+  const limitation = `全样本 ${r.rounds} 轮中，${r.lateDataRounds} 轮首根可用日线晚于分发日超过 14 天，${r.preOnlyRounds || 0} 轮全部日线早于分发日，这些轮次的首日卖价不可靠。全样本排名仅反映当前引擎与可用数据，无法证明完整历史的最优策略。`;
   const criteria = `行情覆盖样本仅包含本次成功刷新、首根取用日线距分发日不超过 1 天、末根日线距快照日不超过 1 天的轮次（${r.firstDayCovered.rounds} 轮）。这组样本也存在筛选偏差。不同样本列的总额不能直接比较。`;
   const methods = [
-    `领取即卖：按分发附近首根可用日线开盘价卖出全部代币，扣卖出滑点，再扣每轮领取成本 $${feeText(r.settings.claimFeeUSD)} 与一笔卖出成本 $${feeText(r.settings.sellFeeUSD)}。`,
+    `领取即卖：按分发日起首根可用日线开盘价卖出全部代币（不取分发日前的 K 线），扣卖出滑点，再扣每轮领取成本 $${feeText(r.settings.claimFeeUSD)} 与一笔卖出成本 $${feeText(r.settings.sellFeeUSD)}。`,
     `目标倍数卖出：目标为首日价的 ${r.settings.targetMultiple} 倍；之后日线最高价触及目标则按目标价卖出并扣滑点和一笔卖出成本，否则按最后日线收盘价估值且不扣卖出成本。两种情况都扣领取成本。`,
     '一直持有：全部代币按最后日线收盘价估值，只扣领取成本，不扣卖出滑点与卖出成本。',
     '半卖半留：一半按首日开盘价扣滑点卖出，一半按最后日线收盘价估值；领取成本扣一次，卖出固定成本扣一次。',

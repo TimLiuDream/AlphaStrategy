@@ -3,9 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
 const { decodeSnapshot } = require('./snapshot_codec');
-const { runBacktest } = require('./backtest_engine');
+const { runBacktest, dropYears } = require('./backtest_engine');
 const data = decodeSnapshot(JSON.parse(fs.readFileSync(path.join(root, 'data', 'snapshot.json'), 'utf8')));
-const defaults = { mult: 2, slip: 0.01, claimUsd: 0.1, sellUsd: 0.05, y2025: true, y2026: true, chain: '', onlyCex: false };
+// 镜像页面默认：2× 目标、1% 滑点、$0.10 领取 + $0.05 卖出成本、全部年份勾选（页面按数据动态生成勾选框且默认全选）、全链、不限现货、口径开关关闭
+const defaults = { mult: 2, slip: 0.01, claimUsd: 0.1, sellUsd: 0.05, years: dropYears(data.tokens), chain: '', onlyCex: false, cleanOnly: false };
 const bt = runBacktest(data, defaults);
 const total = key => bt.rows.reduce((sum, r) => sum + r[key], 0);
 const held = [...bt.rows].sort((a, b) => b.vHold - a.vHold);
@@ -19,6 +20,7 @@ const report = {
   totalsUSD: { instant: total('vInstant'), target: total('vDbl'), hold: total('vHold'), half: total('vHalf') },
   targetHits: bt.rows.filter(r => r.hit).length,
   lateDataRounds: bt.rows.filter(r => r.lateData).length,
+  preOnlyRounds: bt.rows.filter(r => r.preOnly).length,
   refreshedTokens: data.tokens.filter(t => t.fetchedAt && t.fetchedAt.slice(0, 10) === data.snapshotDate).length,
   staleCandleTokens: data.tokens.filter(t => t.c.at(-1)[0] < Math.floor(new Date(data.snapshotDate).getTime() / 86400000) - 7).map(t => ({ symbol: t.s, lastCandle: new Date(t.c.at(-1)[0] * 86400000).toISOString().slice(0, 10) })),
   latestCandleDate: new Date(data.tokens.reduce((latest, t) => t.c.reduce((a, c) => Math.max(a, c[0]), latest), 0) * 86400000).toISOString().slice(0, 10),
@@ -32,12 +34,13 @@ report.refreshedOnly = {
   rounds: fresh.rows.length,
   targetHits: fresh.rows.filter(r => r.hit).length,
   lateDataRounds: fresh.rows.filter(r => r.lateData).length,
+  preOnlyRounds: fresh.rows.filter(r => r.preOnly).length,
   totalsUSD: Object.fromEntries([['instant', 'vInstant'], ['target', 'vDbl'], ['hold', 'vHold'], ['half', 'vHalf']].map(([name, key]) => [name, fresh.rows.reduce((sum, r) => sum + r[key], 0)])),
 };
 const snapshotDay = Math.floor(new Date(data.snapshotDate).getTime() / 86400000);
-const covered = fresh.rows.filter(r => Math.abs(r.t.c[r.i0][0] - r.anchor) <= 1 && r.t.c.at(-1)[0] >= snapshotDay - 1);
+const covered = fresh.rows.filter(r => !r.preOnly && r.t.c[r.i0][0] - r.anchor <= 1 && r.t.c.at(-1)[0] >= snapshotDay - 1);
 report.firstDayCovered = {
-  criteria: 'Successfully refreshed; first candle within one day of distribution; last candle within one day of snapshot',
+  criteria: 'Successfully refreshed; first candle used is on or after the distribution day and within one day of it; last candle within one day of snapshot',
   rounds: covered.length,
   targetHits: covered.filter(r => r.hit).length,
   totalsUSD: Object.fromEntries([['instant', 'vInstant'], ['target', 'vDbl'], ['hold', 'vHold'], ['half', 'vHalf']].map(([name, key]) => [name, covered.reduce((sum, r) => sum + r[key], 0)])),

@@ -18,13 +18,14 @@
     "2026-10-09"
   ],
   "totalsUSD": {
-    "instant": 18248.75579563827,
-    "target": 19787.603361631813,
+    "instant": 18223.82953265594,
+    "target": 19748.65185386593,
     "hold": 16567.70514192896,
-    "half": 17397.280468783625
+    "half": 17384.81733729246
   },
   "targetHits": 228,
   "lateDataRounds": 324,
+  "preOnlyRounds": 0,
   "refreshedTokens": 372,
   "staleCandleTokens": [
     {
@@ -77,22 +78,23 @@
     "rounds": 426,
     "targetHits": 223,
     "lateDataRounds": 314,
+    "preOnlyRounds": 0,
     "totalsUSD": {
-      "instant": 17207.998092559952,
-      "target": 19659.31280886781,
+      "instant": 17183.07182957762,
+      "target": 19620.361301101926,
       "hold": 16525.713170923962,
-      "half": 16856.205631741956
+      "half": 16843.74250025079
     }
   },
   "firstDayCovered": {
-    "criteria": "Successfully refreshed; first candle within one day of distribution; last candle within one day of snapshot",
+    "criteria": "Successfully refreshed; first candle used is on or after the distribution day and within one day of it; last candle within one day of snapshot",
     "rounds": 100,
     "targetHits": 54,
     "totalsUSD": {
-      "instant": 4106.5466037734,
-      "target": 5373.48737823478,
+      "instant": 4081.6203407910643,
+      "target": 5334.53587046888,
       "hold": 3894.051542026169,
-      "half": 3997.7990728997866
+      "half": 3985.335941408619
     }
   }
 }

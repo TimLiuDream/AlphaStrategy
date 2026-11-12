@@ -118,10 +118,7 @@ window.__snapPromise.catch(function () {});
     </div>
     <div class="field">
       <label>参与年份</label>
-      <div style="display:flex;gap:12px">
-        <label class="chk"><input type="checkbox" id="y2025" checked>2025</label>
-        <label class="chk"><input type="checkbox" id="y2026" checked>2026</label>
-      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap" id="years"></div>
     </div>
     <div class="field">
       <label>公链</label>
@@ -130,6 +127,10 @@ window.__snapPromise.catch(function () {});
     <div class="field">
       <label>&nbsp;</label>
       <label class="chk"><input type="checkbox" id="onlyCex">仅看已上币安现货的</label>
+    </div>
+    <div class="field">
+      <label>&nbsp;</label>
+      <label class="chk" title="排除口径存疑轮次：◇ 首根K线距分发日超2周；◆ 全部K线早于分发日"><input type="checkbox" id="clean">仅口径可靠轮次</label>
     </div>
   </div>
 
@@ -188,6 +189,10 @@ const fmt$ = v => {
   return sign + '$' + (a >= 1000 ? Math.round(a).toLocaleString('en-US') : a.toFixed(2));
 };
 const fmtX = v => v >= 100 ? v.toFixed(0) + '×' : v.toFixed(2) + '×';
+// 币名/符号来自第三方 API，进 innerHTML 前必须转义（防注入）
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+// 天序号 → UTC 日期串（锚点是 UTC 天，本地时区渲染会差一天/差一年）
+const isoOf = day => new Date(day * 86400000).toISOString().slice(0, 10);
 const C = { instant:'#38bdf8', dbl:'#f0b90b', hold:'#a78bfa', half:'#34d399' };
 
 $('meta').textContent = `数据快照 ${D.snapshotDate} ｜ 期次：币安 Alpha 全量列表（bapi 接口）｜ 分发记录：alpha123.uk（${D.stats.withDrops} 个币有真实门槛/数量）｜ 价格：GeckoTerminal 日线 ｜ 样本 ${D.stats.withHistory}/${D.stats.total} 币`;
@@ -196,9 +201,16 @@ if (D.tokens.some(t => t.fetchedAt)) {
   $('meta').textContent += ` ｜ 本次刷新 ${refreshed} 币，${D.tokens.length - refreshed} 币沿用旧行情（持有估值取各币最后日线收盘价）`;
 }
 
-// 链下拉
+// 链下拉 + 年份勾选（按数据动态生成：未来出现新年份不会漏过滤，也避免"未勾选年份仍混入"的洞）
 [...new Set(D.tokens.map(t => t.ch))].forEach(ch => {
   const o = document.createElement('option'); o.value = ch; o.textContent = ch; $('chain').appendChild(o);
+});
+BacktestEngine.dropYears(D.tokens).forEach(y => {
+  const l = document.createElement('label'); l.className = 'chk';
+  const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = true; cb.dataset.year = y;
+  l.append(cb, document.createTextNode(String(y)));
+  $('years').appendChild(l);
+  cb.addEventListener('change', renderAll);
 });
 
 // —— 核心回测在 scripts/backtest_engine.js，与单测、报告脚本同一份 ——
@@ -208,10 +220,10 @@ function runBacktest(){
     slip: $('slip').value,
     claimUsd: $('claim').value,
     sellUsd: $('sellFee').value,
-    y2025: $('y2025').checked,
-    y2026: $('y2026').checked,
+    years: [...document.querySelectorAll('#years input:checked')].map(cb => +cb.dataset.year),
     chain: $('chain').value,
-    onlyCex: $('onlyCex').checked
+    onlyCex: $('onlyCex').checked,
+    cleanOnly: $('clean').checked
   });
 }
 
@@ -235,7 +247,7 @@ function renderStats(bt){
   const holdSorted = [...rows].sort((a, b) => b.vHold - a.vHold);
   const top5Share = sH > 0 ? holdSorted.slice(0, 5).reduce((a, r) => a + r.vHold, 0) / sH * 100 : 0;
   const aboveOne = rows.filter(r => r.multNow > 1).length;
-  const medNow = [...rows].sort((a, b) => a.multNow - b.multNow)[Math.floor(rows.length / 2)];
+  const medNow = [...rows].sort((a, b) => a.multNow - b.multNow)[Math.floor(rows.length / 2)] || { multNow: 0 };
   $('cov').innerHTML = `本轮回测 <b>${n}</b> 轮分发（每轮都按真实数量领取，合计 <b>${Math.round(totalCoins).toLocaleString()}</b> 个代币） ｜ 滑点 <b>${(bt.slip * 100).toFixed(0)}%</b> ｜ 领取 <b>$${bt.claimUsd.toFixed(2)}</b>/轮 ｜ 卖出 <b>$${bt.sellUsd.toFixed(2)}</b>/笔<br>` +
     `持仓价值 TOP5 轮次占「不卖」总额 <b>${top5Share.toFixed(0)}%</b>${top5Share > 50 ? ' ⚠️ 高度集中，结论由极少数赢家主导' : ''} ｜ 当前仍 ≥1× 的轮次 <b>${aboveOne}/${n}</b>（${(aboveOne / n * 100).toFixed(0)}%） ｜ 中位数轮次现值 <b>${fmtX(medNow.multNow)}</b>`;
 }
@@ -248,8 +260,8 @@ function renderC1(bt){
   const xs = [], A = [], B = [], Cc = [], F = [];
   for (const r of rows) {
     a += r.vInstant; b += r.vDbl; c += r.vHold; f += r.vHalf;
-    const d = new Date(r.anchor * 86400000);
-    xs.push(`${String(d.getFullYear()).slice(2)}/${d.getMonth() + 1}/${d.getDate()}`);
+    const iso = isoOf(r.anchor);
+    xs.push(`${iso.slice(2, 4)}/${+iso.slice(5, 7)}/${+iso.slice(8, 10)}`);
     A.push(+a.toFixed(1)); B.push(+b.toFixed(1)); Cc.push(+c.toFixed(1)); F.push(+f.toFixed(1));
   }
   chart1 = chart1 || echarts.init($('c1'));
@@ -273,7 +285,7 @@ function renderC1(bt){
 // —— 图2：每期最高倍数散点（log） ——
 function renderC2(bt){
   const rows = bt.rows;
-  const data = rows.map(r => [r.anchor * 86400000, +r.multMax.toFixed(3), r.t.s, r.t.cex]);
+  const data = rows.map(r => [r.anchor * 86400000, +r.multMax.toFixed(3), esc(r.t.s), r.t.cex]);
   chart2 = chart2 || echarts.init($('c2'));
   chart2.setOption({
     animation: false,
@@ -312,14 +324,14 @@ function renderTable(btData){
   const tb = $('tb'); tb.innerHTML = '';
   openRow = -1;
   btData.rows.forEach((r, i) => {
-    const t = r.t, d = new Date(r.anchor * 86400000);
+    const t = r.t, iso = isoOf(r.anchor);
     const tr = document.createElement('tr');
     tr.className = 'row'; tr.dataset.i = i;
     const qty = r.drop && r.drop.pts != null ? `${r.drop.pts}分→${r.drop.amt.toLocaleString()}个` : `${r.drop ? r.drop.amt.toLocaleString() : '?'}个`;
     tr.innerHTML =
-      `<td style="text-align:left"><b>${t.s}</b> <span style="color:var(--dim);font-size:11.5px">${(t.n || '').slice(0, 14)}</span>${t.cex ? '<span class="badge">现货</span>' : ''}${r.lateData ? ' <span title="首根K线距分发日超2周，首日价口径存疑" style="color:var(--dim)">◇</span>' : ''}</td>` +
-      `<td style="color:var(--dim)">${t.ch}</td>` +
-      `<td>${d.getFullYear() - 2000}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}</td>` +
+      `<td style="text-align:left"><b>${esc(t.s)}</b> <span style="color:var(--dim);font-size:11.5px">${esc((t.n || '').slice(0, 14))}</span>${t.cex ? '<span class="badge">现货</span>' : ''}${r.lateData ? ' <span title="首根K线距分发日超2周，首日价口径存疑" style="color:var(--dim)">◇</span>' : ''}${r.preOnly ? ' <span title="全部K线早于分发日，首日价与现价均为旧数据" style="color:var(--dim)">◆</span>' : ''}</td>` +
+      `<td style="color:var(--dim)">${esc(t.ch)}</td>` +
+      `<td>${iso.slice(2, 4)}/${iso.slice(5, 7)}/${iso.slice(8, 10)}</td>` +
       `<td style="color:var(--dim)">${qty}</td>` +
       `<td>${r.o0 < 0.01 ? r.o0.toExponential(1) : r.o0.toPrecision(4)}</td>` +
       `<td>${r.cLast < 0.01 ? r.cLast.toExponential(1) : r.cLast.toPrecision(4)}</td>` +
@@ -343,9 +355,9 @@ function toggleDet(i){
   tr.innerHTML = `<td colspan="12"><div class="det-in">
     ${sparkSVG(t, r)}
     <div class="det-facts">
-      <b>${t.s}</b>（${t.n}）· ${t.ch} · 分发日 ${new Date(r.anchor * 86400000).toISOString().slice(0, 10)}${r.drop && r.drop.pts != null ? ` · 门槛 <b>${r.drop.pts} 分</b> → 领 <b>${r.drop.amt.toLocaleString()}</b> 个` : ''}<br>
-      首日开盘 <b>${fmt$(r.o0)}</b> → 现价 <b>${fmt$(r.cLast)}</b>（当前 <b>${fmtX(r.multNow)}</b>，历史最高 <b>${fmtX(r.multMax)}</b>）<br>
-      ${bt.mult}×挂单${r.hit ? '已触发 ✓' : '未触发 ✗（按现价计值，不扣卖出成本）'} ｜ 半卖半持 = <b>${fmt$(r.vHalf)}</b> ｜ 本轮领取成本 ${fmt$(bt.claimUsd)}，卖出成本 ${fmt$(bt.sellUsd)}（仅实际卖出时扣除） ｜ ${t.cex ? '已上币安现货' + (t.cexn ? '：' + t.cexn : '') : '未上主站现货'}
+      <b>${esc(t.s)}</b>（${esc(t.n)}）· ${esc(t.ch)} · 分发日 ${isoOf(r.anchor)}${r.drop && r.drop.pts != null ? ` · 门槛 <b>${r.drop.pts} 分</b> → 领 <b>${r.drop.amt.toLocaleString()}</b> 个` : ''}<br>
+      首日开盘 <b>${fmt$(r.o0)}</b> → 现价 <b>${fmt$(r.cLast)}</b>（当前 <b>${fmtX(r.multNow)}</b>，历史最高 <b>${fmtX(r.multMax)}</b>）${r.preOnly ? ' <span style="color:var(--dim)">◆ 全部K线早于分发日，价格口径存疑</span>' : ''}<br>
+      ${bt.mult}×挂单${r.hit ? '已触发 ✓' : '未触发 ✗（按现价计值，不扣卖出成本）'} ｜ 半卖半持 = <b>${fmt$(r.vHalf)}</b> ｜ 本轮领取成本 ${fmt$(bt.claimUsd)}，卖出成本 ${fmt$(bt.sellUsd)}（仅实际卖出时扣除） ｜ ${t.cex ? '已上币安现货' + (t.cexn ? '：' + esc(t.cexn) : '') : '未上主站现货'}
     </div></div></td>`;
   tb.children[i].after(tr);
   setTimeout(() => tr.scrollIntoView({ block: 'nearest' }), 0);
@@ -362,13 +374,13 @@ function renderAll(){
   }
 }
 window.addEventListener('resize', () => { chart1 && chart1.resize(); chart2 && chart2.resize(); });
-['mult', 'slip', 'y2025', 'y2026', 'chain', 'onlyCex'].forEach(id => $(id).addEventListener('change', renderAll));
+['mult', 'slip', 'chain', 'onlyCex', 'clean'].forEach(id => $(id).addEventListener('change', renderAll));
 ['claim', 'sellFee'].forEach(id => $(id).addEventListener('input', renderAll));
 function renderFoot(){
   $('foot').innerHTML = `
 <b>模型假设与口径</b><br>
 ① 回测单位是<b>每一轮分发</b>（来源 alpha123.uk，按合约地址匹配），假设每一轮你都完整抢到，数量按该轮真实每号分发量计；无分发记录的币不参与回测。<br>
-② 每轮的首日价 = 分发日（±1 天）起第一根日线<b>开盘价</b>（多轮空投各自锚定自己那轮的日期）；◇ 表示首根 K 线距分发日超过 2 周，口径存疑。<br>
+② 每轮的首日价 = 分发日起第一根日线<b>开盘价</b>（多轮空投各自锚定自己那轮的日期，不取分发日前的 K 线）；◇ = 首根 K 线距分发日超 2 周，◆ = 全部 K 线早于分发日，均口径存疑，可用「仅口径可靠轮次」开关排除。<br>
 ③ 策略B = 领取即挂 ${bt.mult}× 限价卖单；历史最高价触及则按目标价成交（扣滑点和一笔卖出成本），未触及视为仍挂单、按快照现价计账面值（不扣卖出成本）。<br>
 ④ 策略C 的持仓按快照日（${D.snapshotDate}）现价估值，只扣领取成本；曲线中的持有仓位同样按最后一根收盘价回算。<br>
 ⑤ 策略D = 一半按首日开盘卖出、一半持有到快照日。卖出固定成本只扣一次，所以卖出成本不为 0 时不等于 A 与 C 的算术平均。<br>

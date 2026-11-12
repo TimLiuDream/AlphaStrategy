@@ -75,7 +75,7 @@ node scripts/run_backtest.js          # 用页面默认参数回测，并重生 
 | 期次清单 | 币安 Alpha 全量代币列表（binance.com bapi 公开接口），筛 `onlineAirdrop`/`onlineTge` |
 | 分发记录 | alpha123.uk `/api/historydata`（积分门槛 + 每号数量），按合约地址匹配，覆盖率 99%+ |
 | 价格历史 | GeckoTerminal 公共 API 日线 OHLCV（该币聚合主池，USD） |
-| 首日价 | 分发日（±1 天容差）起第一根日线的**开盘价**；首根 K 线距分发日 >2 周的期次标 ◇ |
+| 首日价 | 分发日起第一根日线的**开盘价**（不取分发日前的 K 线）；◇ = 首根 K 线距分发日 >2 周，◆ = 全部 K 线早于分发日，页面「仅口径可靠轮次」开关可排除两者 |
 | 覆盖 | 388 个空投标的中 378 个有价格历史；抓取失败的标的见 `data/fetch_failed.json`，失败时保留旧 K 线 |
 
 ## 已知局限
