@@ -10,6 +10,11 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "IP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "KIN",
   "chain": "BSC",
   "reason": "no_pool"
@@ -25,12 +30,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "XNAP",
+  "symbol": "OOOO",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "SUBHUB",
+  "symbol": "TYCOON",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "VLR",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -40,22 +50,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SHARDS",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "TOWN",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "BSU",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "TAKER",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -75,22 +70,32 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "RESOLV",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "HOME",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "ASRR",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "NXPC",
+  "symbol": "TGT",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "SXT",
-  "chain": "Base",
+  "symbol": "MILK",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "MILK",
+  "symbol": "GM",
   "chain": "BSC",
   "reason": "no_pool"
  }
