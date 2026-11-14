@@ -64,7 +64,9 @@ async function main() {
           if (rel && rel[0]) {
             const pid = rel[0].id; // net_0x...
             const addr = pid.slice(pid.indexOf('_') + 1);
-            poolMap.set(`${net}:${tk.id.split('_').pop().toLowerCase()}`, addr);
+            // id 形如 `net_0x...`：网络段不含 `_`，取第一个 `_` 后的完整地址。
+            // Sui 地址带 `::module::TYPE` 后缀且可能含 `_`，按 `_` 取尾段会截错。
+            poolMap.set(`${net}:${tk.id.slice(tk.id.indexOf('_') + 1).toLowerCase()}`, addr);
           }
         }
         console.log(`[pools] ${net} batch ${Math.floor(i / 30) + 1}: +${j.data.length}`);
@@ -101,7 +103,9 @@ async function main() {
       else ndjson.write(JSON.stringify(rec) + '\n');
       console.log(`[${n}/${todo.length}] ${t.symbol} bars=${candles.length}`);
       doneSet.add(t.symbol + '@' + t.contractAddress);
-      fs.writeFileSync(doneFile, JSON.stringify([...doneSet]));
+      // 原子写，避免进程在写入中途被打断留下损坏的 JSON，导致下次续传解析失败
+      fs.writeFileSync(doneFile + '.tmp', JSON.stringify([...doneSet]));
+      fs.renameSync(doneFile + '.tmp', doneFile);
     }
     await sleep(3400);
   }

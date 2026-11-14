@@ -42,7 +42,6 @@ module.exports = function buildPublicContent(r) {
   const summary = `全样本 ${r.targetHits}/${r.rounds} 轮触及目标倍数；持有总额最高的 5 轮占 ${(r.top5HoldShare * 100).toFixed(2)}%。金额为卖出现金加持仓估值。`;
   const md = [`# 币安 Alpha 空投策略回测报告 · ${r.snapshotDate}`, '', description, '', '## 数据覆盖', '', coverage, '', '## 模拟结果', '', '| ' + headers.join(' | ') + ' |', '|---|---:|---:|---:|', ...rows.map(row => '| ' + row.join(' | ') + ' |'), '', summary, '', '**' + limitation + '**', '', criteria, '', '## 回测方法', '', ...methods.map(s => '- ' + s), '', '## 局限', '', caveats, '', '## 数据来源', '', ...sources.map(([name, url, note]) => `- [${name}](${url})：${note}`), '', '## 入口', '', `- [交互回测器](${site}/)`, `- [HTML 报告](${site}/report)`, `- [机器可读结果](${site}/data/backtest_results.json)`, `- [缺失标的](${site}/data/fetch_failed.json)`, '', `生成时间：${r.generatedAt}。本报告为历史快照，非实时行情。`, ''].join('\n');
   fs.writeFileSync(path.join(root, 'report.md'), md + '\n' + contactMarkdown + '\n');
-  fs.writeFileSync(path.join(root, 'data', 'backtest_report.md'), md + '\n' + contactMarkdown + '\n');
   const html = `<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alpha 空投回测报告 ${escape(r.snapshotDate)} · 方法与数据局限</title>

@@ -17,7 +17,12 @@ const types = {
 };
 
 function resolve(urlPath) {
-  const rel = decodeURIComponent(urlPath.split('?')[0]);
+  let rel;
+  try {
+    rel = decodeURIComponent(urlPath.split('?')[0]);
+  } catch {
+    return null; // 畸形百分号转义（如 /%）按拒绝处理，不能让异常冲垮整个预览服务
+  }
   const abs = path.resolve(root, '.' + (rel === '/' ? '/index.html' : rel));
   if (abs !== root && !abs.startsWith(root + path.sep)) return null;
   return abs;

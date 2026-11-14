@@ -27,9 +27,9 @@ const report = {
   top5HoldShare: total('vHold') ? held.slice(0, 5).reduce((sum, r) => sum + r.vHold, 0) / total('vHold') : 0,
   top5Hold: held.slice(0, 5).map(r => ({ symbol: r.t.s, date: r.drop.d, valueUSD: r.vHold })),
 };
-const allTokens = data.tokens;
-data.tokens = allTokens.filter(t => t.fetchedAt?.slice(0, 10) === data.snapshotDate);
-const fresh = runBacktest(data, defaults);
+// 仅成功刷新的样本用浅拷贝跑，不变异共享的 data 对象
+const freshData = { ...data, tokens: data.tokens.filter(t => t.fetchedAt?.slice(0, 10) === data.snapshotDate) };
+const fresh = runBacktest(freshData, defaults);
 report.refreshedOnly = {
   rounds: fresh.rows.length,
   targetHits: fresh.rows.filter(r => r.hit).length,
@@ -45,7 +45,6 @@ report.firstDayCovered = {
   targetHits: covered.filter(r => r.hit).length,
   totalsUSD: Object.fromEntries([['instant', 'vInstant'], ['target', 'vDbl'], ['hold', 'vHold'], ['half', 'vHalf']].map(([name, key]) => [name, covered.reduce((sum, r) => sum + r[key], 0)])),
 };
-data.tokens = allTokens;
 fs.writeFileSync(path.join(root, 'data', 'backtest_results.json'), JSON.stringify(report, null, 2) + '\n');
 require('./build_public_content')(report);
 console.log(JSON.stringify(report, null, 2));
