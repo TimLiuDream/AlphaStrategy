@@ -5,17 +5,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TRUTH",
-  "chain": "Sui",
-  "reason": "no_pool"
- },
- {
   "symbol": "IP",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "KIN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -30,27 +20,27 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "OOOO",
+  "symbol": "SUBHUB",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "TYCOON",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "VLR",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "PINGPONG",
+  "symbol": "TOWN",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "BSU",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "LN",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "YALA",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -80,23 +70,18 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "BDXN",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "ASRR",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "TGT",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "MILK",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "GM",
-  "chain": "BSC",
+  "symbol": "RDAC",
+  "chain": "Base",
   "reason": "no_pool"
  }
 ]
