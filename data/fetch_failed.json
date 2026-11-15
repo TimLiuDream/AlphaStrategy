@@ -5,7 +5,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "IP",
+  "symbol": "KIN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -20,12 +20,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SUBHUB",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "TOWN",
+  "symbol": "FST",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -50,11 +45,6 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "F",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "PUNDIAI",
   "chain": "BSC",
   "reason": "no_pool"
@@ -70,17 +60,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "BDXN",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "ASRR",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "RDAC",
+  "chain": "Base",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SXT",
   "chain": "Base",
   "reason": "no_pool"
  }
