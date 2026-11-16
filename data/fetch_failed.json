@@ -5,6 +5,11 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "IP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "KIN",
   "chain": "BSC",
   "reason": "no_pool"
@@ -15,7 +20,32 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "Sight",
+  "symbol": "XNAP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SUBHUB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "MIRROR",
+  "chain": "Base",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SHARDS",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "XLAB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "TOWN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -35,13 +65,13 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "YALA",
-  "chain": "BSC",
+  "symbol": "TANSSI",
+  "chain": "Ethereum",
   "reason": "no_pool"
  },
  {
-  "symbol": "TANSSI",
-  "chain": "Ethereum",
+  "symbol": "F",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
@@ -65,13 +95,18 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "NXPC",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "RDAC",
   "chain": "Base",
   "reason": "no_pool"
  },
  {
-  "symbol": "SXT",
-  "chain": "Base",
+  "symbol": "MILK",
+  "chain": "BSC",
   "reason": "no_pool"
  }
 ]
