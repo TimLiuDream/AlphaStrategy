@@ -1,5 +1,10 @@
 [
  {
+  "symbol": "NES",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "KAT",
   "chain": "BSC",
   "reason": "no_pool"
@@ -20,22 +25,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "XNAP",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "SUBHUB",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "MIRROR",
-  "chain": "Base",
-  "reason": "no_pool"
- },
- {
-  "symbol": "SHARDS",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -50,17 +40,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "FST",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "BSU",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "LN",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "TAKER",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -95,12 +85,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "NXPC",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "RDAC",
+  "symbol": "SXT",
   "chain": "Base",
   "reason": "no_pool"
  },
