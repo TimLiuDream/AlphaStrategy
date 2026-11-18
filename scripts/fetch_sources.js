@@ -27,24 +27,50 @@ function writeJson(file, obj) {
   fs.renameSync(tmp, file);
 }
 
-async function pull(src) {
-  const hasPrev = fs.existsSync(src.file);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function warn(title, msg) {
+  console.warn(`[warn] ${title}: ${msg}`);
+  if (process.env.GITHUB_ACTIONS) console.log(`::warning title=${title}::${msg}`);
+}
+
+function checkFreshness(src) {
+  if (src.name !== 'alpha123-history' || !fs.existsSync(src.file)) return;
   try {
-    const res = await fetch(src.url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'AlphaStrategyDataRefresh/1.0' },
-      signal: AbortSignal.timeout(30000)
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    if (!src.valid(json)) throw new Error('unexpected payload');
-    writeJson(src.file, json);
-    console.log(`[ok] ${src.name}`);
-    return true;
-  } catch (e) {
-    console.log(`[keep] ${src.name}: ${e.message}${hasPrev ? ' (previous file kept)' : ''}`);
-    if (!hasPrev) throw e;
-    return false;
+    const airdrops = JSON.parse(fs.readFileSync(src.file, 'utf8')).airdrops || [];
+    const latest = airdrops.map(x => x && x.date).filter(Boolean).sort().at(-1);
+    if (!latest) return;
+    const lagDays = Math.floor((Date.now() - new Date(latest + 'T00:00:00Z').getTime()) / 86400000);
+    if (lagDays > 7) warn('Stale airdrop history', `alpha123 latest date is ${latest} (${lagDays} days old)`);
+  } catch {}
+}
+
+async function pull(src, tries = 3) {
+  const hasPrev = fs.existsSync(src.file);
+  let lastErr;
+  for (let i = 0; i < tries; i++) {
+    try {
+      const res = await fetch(src.url, {
+        headers: { Accept: 'application/json', 'User-Agent': 'AlphaStrategyDataRefresh/1.0' },
+        signal: AbortSignal.timeout(30000)
+      });
+      if (res.status === 429 || res.status >= 500) throw new Error('HTTP ' + res.status);
+      if (!res.ok) { lastErr = new Error('HTTP ' + res.status); break; }
+      const json = await res.json();
+      if (!src.valid(json)) { lastErr = new Error('unexpected payload'); break; }
+      writeJson(src.file, json);
+      console.log(`[ok] ${src.name}`);
+      checkFreshness(src);
+      return true;
+    } catch (e) {
+      lastErr = e;
+      if (i + 1 < tries) await sleep(5000 * (i + 1));
+    }
   }
+  const msg = `${lastErr.message}${hasPrev ? ' (previous file kept)' : ''}`;
+  warn(`Source refresh skipped (${src.name})`, msg);
+  checkFreshness(src);
+  if (!hasPrev) throw lastErr;
+  return false;
 }
 
 (async () => {

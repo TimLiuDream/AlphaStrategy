@@ -5,5 +5,13 @@ module.exports = {
   NET: {
     BSC: 'bsc', Base: 'base', Ethereum: 'eth', Arbitrum: 'arbitrum',
     Solana: 'solana', Sui: 'sui-network', Linea: 'linea', Sonic: 'sonic', TRON: 'tron'
+  },
+  // 币安 chainId（含 CT_ 前缀）与 alpha123 chain_id → 标准 chainName，避免跨链同合约地址串链
+  CHAIN_BY_ID: {
+    '56': 'BSC', '8453': 'Base', '1': 'Ethereum', '42161': 'Arbitrum',
+    '501': 'Solana', 'CT_501': 'Solana',
+    '784': 'Sui', 'CT_784': 'Sui',
+    '59144': 'Linea', '146': 'Sonic',
+    '195': 'TRON', 'CT_195': 'TRON'
   }
 };

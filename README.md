@@ -14,7 +14,7 @@
 - **策略C · 一直不卖**：持有至今，按数据快照日现价估值
 - **策略D · 半卖半持**：一半首日卖出 + 一半持有到快照日
 
-纯静态站：`index.html` + `echarts.min.js` + 异步加载的 `data/snapshot.json`。页面先画出壳子，再取行情快照。当前快照未压缩约 1.7MB（原先同步加载的 `data.js` 约 2.7MB），Brotli 后约 390KB。Vercel 会按浏览器的 `Accept-Encoding` 自动用 Brotli 或 Gzip 压缩，不为文件预压缩。`/data/snapshot.json` 的缓存是 `public, max-age=600, stale-while-revalidate=86400`（约 10 分钟内直接用缓存，过期后可先显示旧快照再后台更新）。`echarts.min.js` 仍是一年不变缓存。原始日 K（`data/alpha_history.ndjson`，约 5MB）和代币清单仍留在仓库里供增量抓取，但写在 `.vercelignore` 里，不会打进线上站点。没有把 K 线拆成很多文件：整份快照每天一起变，拆开只会让压缩变差，回测也要等全部 K 线到齐才能算。
+纯静态站：`index.html` + `echarts.min.js` + 异步加载的 `data/snapshot.json`。页面先画出壳子，再取行情快照。当前快照未压缩约 2.1MB（原先同步加载的 `data.js` 约 2.7MB），Brotli 后约 390KB。Vercel 会按浏览器的 `Accept-Encoding` 自动用 Brotli 或 Gzip 压缩，不为文件预压缩。`/data/snapshot.json` 的缓存是 `public, max-age=600, stale-while-revalidate=86400`（约 10 分钟内直接用缓存，过期后可先显示旧快照再后台更新）。`echarts.min.js` 仍是一年不变缓存。原始日 K（`data/alpha_history.ndjson`，约 5MB）和代币清单仍留在仓库里供增量抓取，但写在 `.vercelignore` 里，不会打进线上站点。没有把 K 线拆成很多文件：整份快照每天一起变，拆开只会让压缩变差，回测也要等全部 K 线到齐才能算。
 
 本地不能再靠双击 `index.html`：`file://` 下浏览器会拦截 `fetch`。在项目目录执行：
 
@@ -76,7 +76,7 @@ node scripts/run_backtest.js          # 用页面默认参数回测，并重生 
 | 分发记录 | alpha123.uk `/api/historydata`（积分门槛 + 每号数量），按合约地址匹配，覆盖率 99%+ |
 | 价格历史 | GeckoTerminal 公共 API 日线 OHLCV（该币聚合主池，USD） |
 | 首日价 | 分发日起第一根日线的**开盘价**（不取分发日前的 K 线）；◇ = 首根 K 线距分发日 >2 周，◆ = 全部 K 线早于分发日，页面「仅口径可靠轮次」开关可排除两者 |
-| 覆盖 | 388 个空投标的中 378 个有价格历史；抓取失败的标的见 `data/fetch_failed.json`，失败时保留旧 K 线 |
+| 覆盖 | <!-- COVERAGE:START -->391 个目标标的中 387 个有价格历史（359 个匹配分发记录）<!-- COVERAGE:END -->；抓取失败的标的见 `data/fetch_failed.json`，失败时保留旧 K 线 |
 
 ## 已知局限
 

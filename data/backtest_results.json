@@ -1,6 +1,10 @@
 {
   "snapshotDate": "2026-11-17",
   "generatedAt": "2026-11-17T10:17:12.065Z",
+  "years": [
+    2025,
+    2026
+  ],
   "settings": {
     "targetMultiple": 2,
     "slippage": 0.01,
@@ -10,20 +14,21 @@
   "coverage": {
     "total": 391,
     "withHistory": 387,
-    "withDrops": 356
+    "withDrops": 359
   },
-  "rounds": 441,
+  "rounds": 448,
   "dateRange": [
     "2025-04-25",
-    "2026-10-09"
+    "2026-11-13"
   ],
+  "dropLagDays": 4,
   "totalsUSD": {
-    "instant": 16715.592521030547,
-    "target": 19071.672206238294,
-    "hold": 15144.993790327862,
-    "half": 15919.268155679198
+    "instant": 16912.458937310545,
+    "target": 19272.48687623829,
+    "hold": 15359.710402327864,
+    "half": 16124.8846698192
   },
-  "targetHits": 233,
+  "targetHits": 235,
   "lateDataRounds": 323,
   "preOnlyRounds": 0,
   "refreshedTokens": 372,
@@ -42,7 +47,7 @@
     }
   ],
   "latestCandleDate": "2026-11-17",
-  "top5HoldShare": 0.38078671320968266,
+  "top5HoldShare": 0.3754636159107513,
   "top5Hold": [
     {
       "symbol": "BTW",
@@ -71,26 +76,26 @@
     }
   ],
   "refreshedOnly": {
-    "rounds": 428,
-    "targetHits": 229,
+    "rounds": 435,
+    "targetHits": 231,
     "lateDataRounds": 313,
     "preOnlyRounds": 0,
     "totalsUSD": {
-      "instant": 16346.357407939224,
-      "target": 18728.767215160293,
-      "hold": 15107.919170329864,
-      "half": 15716.438289134538
+      "instant": 16543.22382421922,
+      "target": 18929.58188516029,
+      "hold": 15322.635782329866,
+      "half": 15922.05480327454
     }
   },
   "firstDayCovered": {
     "criteria": "Successfully refreshed; first candle used is on or after the distribution day and within one day of it; last candle within one day of snapshot",
-    "rounds": 100,
-    "targetHits": 54,
+    "rounds": 107,
+    "targetHits": 56,
     "totalsUSD": {
-      "instant": 4235.6681070480645,
-      "target": 5327.964661692542,
-      "hold": 4875.56853214764,
-      "half": 4553.118319597856
+      "instant": 4432.534523328064,
+      "target": 5528.779331692541,
+      "hold": 5090.28514414764,
+      "half": 4758.734833737855
     }
   }
 }

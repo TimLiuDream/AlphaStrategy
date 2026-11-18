@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { evalToken, runBacktest, dropYears } = require('./backtest_engine');
 const { encodeSnapshot, decodeSnapshot } = require('./snapshot_codec');
+const { NET, CHAIN_BY_ID } = require('./chains');
 const dayOf = ms => Math.floor(ms / 86400000);
 const D = 86400000;
 let pass = 0, fail = 0;
@@ -56,12 +57,16 @@ const t1b = { t: 10 * D, c: [[9, 7, 8, 7], [10, 1, 2, 1.5], [12, 1.2, 1.3, 0.5]]
 r = evalToken(t1b, 2, 100, 0, 10, null);
 console.log('用例1b 首日跳过分发前K线:');
 eq('首日开盘(day10=1)', r.vInstant / 100, 1);
-// 用例5b(回归): 单根K线（刚发行）也能参与回测
+// 用例5b(回归): 单根K线（刚发行）也能参与回测；空K线安全返回 null；长序列不爆栈
 const t4 = { t: 10 * D, c: [[10, 1, 1.5, 0.8]] };
 r = evalToken(t4, 2, 100, 0, 10, null);
-console.log('用例5b 单根K线:');
+console.log('用例5b 单根/空/长K线边界:');
 eq('vInstant', r.vInstant, 100);
 eq('vHold', r.vHold, 80);
+eq('空K线返回null', evalToken({ t: 10 * D, c: [] }, 2, 100, 0, 10, null), null);
+const longBars = Array.from({ length: 5000 }, (_, i) => [10 + i, 1, i === 4200 ? 3.5 : 1.2, 0.9]);
+eq('5000根K线最高倍', evalToken({ t: 10 * D, c: longBars }, 2, 100, 0, 10, null).multMax, 3.5);
+eq('链ID归一化(CT_501=501)', CHAIN_BY_ID['CT_501'] === 'Solana' && CHAIN_BY_ID['501'] === 'Solana' && !!NET[CHAIN_BY_ID['CT_784']] ? 1 : 0, 1);
 
 console.log('用例6 固定成本:');
 r = evalToken(t1, 2, 1000, 0, dayOf(t1.t), null, 0.1, 0.05);
@@ -126,13 +131,13 @@ const sample = {
   stats: { total: 2, withHistory: 2, withDrops: 1 },
   tokens: [
     {
-      s: 'BID', n: 'CreatorBid', ch: 'BSC', a: '0xabc', t: 1, cex: false, cexn: '', pn: 0.1,
+      s: 'BID', n: 'CreatorBid', ch: 'BSC', a: '0xabc', t: 1, cex: false, cexn: '',
       fetchedAt: '2026-01-01T00:00:00.000Z',
       drops: [{ d: '2026-01-02', pts: 10, amt: 5 }],
       c: [[20533, 0.00780973, 0.00780973, 0.00751903], [20535, 1.5, 2, 0]]
     },
     {
-      s: 'MCH', n: 'Wide', ch: 'BSC', a: '0xdef', t: 2, cex: true, cexn: 'MCH', pn: 1,
+      s: 'MCH', n: 'Wide', ch: 'BSC', a: '0xdef', t: 2, cex: true, cexn: 'MCH',
       fetchedAt: null,
       drops: [],
       c: [[20000, 1.44387e-20, 2e-20, 1e-20], [20001, 0.0000914403, 0.0001, 0.00008]]

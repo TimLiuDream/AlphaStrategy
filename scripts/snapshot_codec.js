@@ -68,7 +68,6 @@
         const out = {
           s: t.s, n: t.n, ch: t.ch, a: t.a, t: t.t,
           x: t.cex ? 1 : 0,
-          pn: t.pn,
           f: t.fetchedAt,
           p: (t.drops || []).map(d => [d.d, d.pts, d.amt])
         };
@@ -95,7 +94,6 @@
         t: tok.t,
         cex: !!tok.x,
         cexn: tok.xn || '',
-        pn: tok.pn,
         fetchedAt: tok.f || null,
         drops: (tok.p || []).map(row => ({ d: row[0], pts: row[1], amt: row[2] })),
         c: unpackCandles(tok)

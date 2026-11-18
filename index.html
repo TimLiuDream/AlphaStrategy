@@ -233,14 +233,17 @@ function renderStats(bt){
   const S = k => rows.reduce((a, r) => a + r[k], 0);
   const sI = S('vInstant'), sD = S('vDbl'), sH = S('vHold'), sF = S('vHalf');
   const hits = rows.filter(r => r.hit).length;
-  const n = rows.length || 1;
+  const count = rows.length, div = count || 1;
+  const pct = num => count ? (num / count * 100).toFixed(0) : '0';
   const totalCoins = rows.reduce((a, r) => a + (r.drop ? r.drop.amt : 0), 0);
+  const cmpBig = count === 0 ? '—' : (sI > 0 ? (sH / sI).toFixed(2) + '×' : fmt$(sH - sI));
+  const cmpNote = count === 0 ? '当前筛选条件下无匹配轮次' : `持有比立刻卖${sH >= sI ? '多' : '少'} ${fmt$(Math.abs(sH - sI))}`;
   const cards = [
-    { c: C.instant, tag: '策略A · 领取即卖', big: fmt$(sI), note: `平均每期 ${fmt$(sI / n)}（首日开盘价，已扣滑点与固定成本）` },
-    { c: C.dbl, tag: `策略B · 挂 ${bt.mult}× 卖单`, big: fmt$(sD), note: `达标 ${hits}/${n} 期（${(hits / n * 100).toFixed(0)}%）；未达标按现价计值且不扣卖出成本` },
-    { c: C.hold, tag: '策略C · 一直不卖', big: fmt$(sH), note: `按最后日线收盘价估值，只扣领取成本，平均每期 ${fmt$(sH / n)}` },
+    { c: C.instant, tag: '策略A · 领取即卖', big: fmt$(sI), note: `平均每期 ${fmt$(sI / div)}（首日开盘价，已扣滑点与固定成本）` },
+    { c: C.dbl, tag: `策略B · 挂 ${bt.mult}× 卖单`, big: fmt$(sD), note: `达标 ${hits}/${count} 期（${pct(hits)}%）；未达标按现价计值且不扣卖出成本` },
+    { c: C.hold, tag: '策略C · 一直不卖', big: fmt$(sH), note: `按最后日线收盘价估值，只扣领取成本，平均每期 ${fmt$(sH / div)}` },
     { c: C.half, tag: '策略D · 卖一半留一半', big: fmt$(sF), note: `一半首日卖出、一半持有；卖出固定成本只扣一次` },
-    { c: sH >= sI ? C.half : '#f87171', tag: '持有 vs 立刻卖', big: (sH / sI).toFixed(2) + '×', note: `持有比立刻卖${sH >= sI ? '多' : '少'} ${fmt$(Math.abs(sH - sI))}` }
+    { c: count === 0 ? '#7b8798' : (sH >= sI ? C.half : '#f87171'), tag: '持有 vs 立刻卖', big: cmpBig, note: cmpNote }
   ];
   $('stats').innerHTML = cards.map(c =>
     `<div class="stat"><div class="tag"><span class="dot" style="background:${c.c}"></span>${c.tag}</div><div class="big">${c.big}</div><div class="note">${c.note}</div></div>`).join('');
@@ -248,8 +251,14 @@ function renderStats(bt){
   const top5Share = sH > 0 ? holdSorted.slice(0, 5).reduce((a, r) => a + r.vHold, 0) / sH * 100 : 0;
   const aboveOne = rows.filter(r => r.multNow > 1).length;
   const medNow = [...rows].sort((a, b) => a.multNow - b.multNow)[Math.floor(rows.length / 2)] || { multNow: 0 };
-  $('cov').innerHTML = `本轮回测 <b>${n}</b> 轮分发（每轮都按真实数量领取，合计 <b>${Math.round(totalCoins).toLocaleString()}</b> 个代币） ｜ 滑点 <b>${(bt.slip * 100).toFixed(0)}%</b> ｜ 领取 <b>$${bt.claimUsd.toFixed(2)}</b>/轮 ｜ 卖出 <b>$${bt.sellUsd.toFixed(2)}</b>/笔<br>` +
-    `持仓价值 TOP5 轮次占「不卖」总额 <b>${top5Share.toFixed(0)}%</b>${top5Share > 50 ? ' ⚠️ 高度集中，结论由极少数赢家主导' : ''} ｜ 当前仍 ≥1× 的轮次 <b>${aboveOne}/${n}</b>（${(aboveOne / n * 100).toFixed(0)}%） ｜ 中位数轮次现值 <b>${fmtX(medNow.multNow)}</b>`;
+  const lateCount = rows.filter(r => r.lateData).length;
+  const preCount = rows.filter(r => r.preOnly).length;
+  const qualityWarn = !bt.cleanOnly && (lateCount + preCount > 0)
+    ? `<br><span style="color:var(--yellow)">⚠️ 当前包含 ${lateCount ? `<b>${lateCount}</b> 轮首日K线晚于分发日超2周（◇）` : ''}${lateCount && preCount ? '、' : ''}${preCount ? `<b>${preCount}</b> 轮仅存分发前旧K线（◆）` : ''}，首日卖价与倍数可能失真；可勾选上方「仅口径可靠轮次」排除</span>`
+    : '';
+  $('cov').innerHTML = `本轮回测 <b>${count}</b> 轮分发（每轮都按真实数量领取，合计 <b>${Math.round(totalCoins).toLocaleString()}</b> 个代币） ｜ 滑点 <b>${(bt.slip * 100).toFixed(0)}%</b> ｜ 领取 <b>$${bt.claimUsd.toFixed(2)}</b>/轮 ｜ 卖出 <b>$${bt.sellUsd.toFixed(2)}</b>/笔<br>` +
+    `持仓价值 TOP5 轮次占「不卖」总额 <b>${top5Share.toFixed(0)}%</b>${top5Share > 50 ? ' ⚠️ 高度集中，结论由极少数赢家主导' : ''} ｜ 当前仍 ≥1× 的轮次 <b>${aboveOne}/${count}</b>（${pct(aboveOne)}%） ｜ 中位数轮次现值 <b>${fmtX(medNow.multNow)}</b>` +
+    qualityWarn;
 }
 
 // —— 图1：累计账户总额 ——
@@ -286,6 +295,7 @@ function renderC1(bt){
 function renderC2(bt){
   const rows = bt.rows;
   const data = rows.map(r => [r.anchor * 86400000, +r.multMax.toFixed(3), esc(r.t.s), r.t.cex]);
+  const xSpan = data.length ? [data[0][0], Math.max(data[data.length - 1][0], data[0][0] + 86400000)] : null;
   chart2 = chart2 || echarts.init($('c2'));
   chart2.setOption({
     animation: false,
@@ -297,8 +307,8 @@ function renderC2(bt){
     series: [
       { type: 'scatter', symbolSize: 9, data: data.filter(d => d[3]), itemStyle: { color: '#f0b90b', opacity: .85 }, name: '已上币安现货' },
       { type: 'scatter', symbolSize: 7, data: data.filter(d => !d[3]), itemStyle: { color: '#5b6b85', opacity: .75 }, name: '仅 Alpha' },
-      { type: 'line', data: [[data[0] ? data[0][0] : 0, 1], [Date.now(), 1]], symbol: 'none', lineStyle: { color: '#5b6b85', type: 'dashed' }, tooltip: { show: false }, silent: true },
-      { type: 'line', data: [[data[0] ? data[0][0] : 0, bt.mult], [Date.now(), bt.mult]], symbol: 'none', lineStyle: { color: '#34d399', type: 'dashed' }, tooltip: { show: false }, silent: true }
+      { type: 'line', data: xSpan ? [[xSpan[0], 1], [xSpan[1], 1]] : [], symbol: 'none', lineStyle: { color: '#5b6b85', type: 'dashed' }, tooltip: { show: false }, silent: true },
+      { type: 'line', data: xSpan ? [[xSpan[0], bt.mult], [xSpan[1], bt.mult]] : [], symbol: 'none', lineStyle: { color: '#34d399', type: 'dashed' }, tooltip: { show: false }, silent: true }
     ]
   }, true);
 }
@@ -310,8 +320,9 @@ function sparkSVG(t, r){
   if (closes.length < 2) return '';
   const norm = closes.map(v => Math.max(0.01, v / r.o0));
   const lo = Math.min(...norm), hi = Math.max(...norm, bt.mult);
+  const span = Math.log(hi) - Math.log(lo);
   const X = i => P + (W - 2 * P) * i / (norm.length - 1);
-  const Y = v => H - P - (H - 2 * P) * (Math.log(v) - Math.log(lo)) / (Math.log(hi) - Math.log(lo));
+  const Y = v => span === 0 ? H / 2 : H - P - (H - 2 * P) * (Math.log(v) - Math.log(lo)) / span;
   const pts = norm.map((v, i) => X(i).toFixed(1) + ',' + Y(v).toFixed(1)).join(' ');
   const yT = Y(bt.mult);
   const yNow = Y(norm[norm.length - 1]);

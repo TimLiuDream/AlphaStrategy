@@ -7,14 +7,14 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const { encodeSnapshot } = require('./snapshot_codec');
-const { NET } = require('./chains');
+const { NET, CHAIN_BY_ID } = require('./chains');
 const ROOT = path.join(__dirname, '..');
 const DATA = path.join(ROOT, 'data');
 const now = process.env.SNAPSHOT_AT ? new Date(process.env.SNAPSHOT_AT) : new Date();
 if (Number.isNaN(now.getTime())) throw new Error('SNAPSHOT_AT is not a valid date');
 const raw = JSON.parse(fs.readFileSync(path.join(DATA, 'alpha_tokens_raw.json'), 'utf8')).data;
 
-// alpha123 分发记录: 合约(小写) -> [{date, pts, amt}]
+// alpha123 分发记录: 合约(小写) -> [{d, pts, amt, ch}]（带标准链名过滤，避免跨链同合约串链）
 const dropsByAddr = new Map();
 try {
   const al = JSON.parse(fs.readFileSync(path.join(DATA, 'alpha123_history_raw.json'), 'utf8')).airdrops;
@@ -23,33 +23,54 @@ try {
     if (!ca) continue;
     const pts = parseInt(String(x.points).split(/\s+/)[0], 10); // 多档取主档
     const amt = parseFloat(String(x.amount).replace(/,/g, ''));
+    const ch = CHAIN_BY_ID[String(x.chain_id || '')] || '';
     if (!dropsByAddr.has(ca)) dropsByAddr.set(ca, []);
-    dropsByAddr.get(ca).push({ d: x.date, pts: isFinite(pts) ? pts : null, amt: isFinite(amt) ? amt : null });
+    dropsByAddr.get(ca).push({ d: x.date, pts: isFinite(pts) ? pts : null, amt: isFinite(amt) ? amt : null, ch });
   }
   for (const arr of dropsByAddr.values()) arr.sort((a, b) => a.d.localeCompare(b.d));
 } catch (e) { console.log('alpha123 merge skipped:', e.message); }
 
-const tokens = [];
-const seen = new Set();
+const mergedByKey = new Map();
 const lines = fs.readFileSync(path.join(DATA, 'alpha_history.ndjson'), 'utf8').split('\n').filter(Boolean);
 for (const line of lines) {
   try {
     const r = JSON.parse(line);
-    if (!r.candles || r.candles.length < 1) continue; // 单根K线也保留（刚发行即无行情的极端样本不该静默消失）
-    if (seen.has(r.symbol + '@' + r.contract)) continue;
-    seen.add(r.symbol + '@' + r.contract);
-    const cexCoinName = r.cexCoinName || (raw.find(x => x.symbol === r.symbol && x.contractAddress.toLowerCase() === String(r.contract).toLowerCase()) || {}).cexCoinName || '';
-    tokens.push({
-      s: r.symbol, n: r.name, ch: r.chain, a: r.contract,
-      t: r.listingTime, cex: !!r.listingCex, cexn: cexCoinName,
-      fetchedAt: r.fetchedAt || null,
-      drops: dropsByAddr.get(String(r.contract).toLowerCase()) || [],
-      c: r.candles.filter(b => b[1] > 0 && b[2] > 0 && b[3] != null).map(b => [Math.round(b[0] * 1000 / 86400000), // 秒→天序号 (epoch days)
-        parseFloat(Number(b[1]).toPrecision(6)),
-        parseFloat(Number(b[2]).toPrecision(6)),
-        parseFloat(Number(b[3]).toPrecision(6))])
-    });
+    if (!Array.isArray(r.candles) || r.candles.length < 1) continue;
+    const key = r.symbol + '@' + r.contract;
+    const prev = mergedByKey.get(key);
+    if (prev) {
+      const byTs = new Map(prev.candles.map(c => [c[0], c]));
+      for (const c of r.candles) byTs.set(c[0], c);
+      r.candles = [...byTs.values()].sort((a, b) => a[0] - b[0]);
+      r.fetchedAt = r.fetchedAt || prev.fetchedAt;
+    }
+    mergedByKey.set(key, r);
   } catch (e) { console.log('bad line', e.message); }
+}
+
+const tokens = [];
+for (const r of mergedByKey.values()) {
+  const c = r.candles
+    .filter(b => b[1] > 0 && b[2] > 0 && b[3] != null && b[3] >= 0)
+    .map(b => [
+      Math.round(b[0] * 1000 / 86400000), // 秒→天序号 (epoch days)
+      parseFloat(Number(b[1]).toPrecision(6)),
+      parseFloat(Number(b[2]).toPrecision(6)),
+      parseFloat(Number(b[3]).toPrecision(6))
+    ]);
+  if (c.length < 1) continue; // 过滤无效价格后仍须至少保留一根有效K线，防止下游访问空数组崩溃
+  const ca = String(r.contract).toLowerCase();
+  const cexCoinName = r.cexCoinName || (raw.find(x => x.symbol === r.symbol && x.contractAddress.toLowerCase() === ca) || {}).cexCoinName || '';
+  const drops = (dropsByAddr.get(ca) || [])
+    .filter(dp => !dp.ch || dp.ch === r.chain)
+    .map(({ d, pts, amt }) => ({ d, pts, amt }));
+  tokens.push({
+    s: r.symbol, n: r.name, ch: r.chain, a: r.contract,
+    t: r.listingTime, cex: !!r.listingCex, cexn: cexCoinName,
+    fetchedAt: r.fetchedAt || null,
+    drops,
+    c
+  });
 }
 tokens.sort((x, y) => x.t - y.t);
 

@@ -20,9 +20,15 @@
     return i;
   }
   function evalToken(t, mult, units, slip, dayAnchor, drop, claimUsd, sellUsd) {
-    const cs = t.c, i0 = firstIdxFrom(t, dayAnchor);
-    const o0 = cs[i0][1], hMax = Math.max(...cs.slice(i0).map(c => c[2])), cLast = cs[cs.length - 1][3];
-    if (!(o0 > 0) || !(cLast >= 0)) return null;
+    const cs = t && t.c;
+    if (!Array.isArray(cs) || cs.length === 0) return null;
+    const i0 = firstIdxFrom(t, dayAnchor);
+    const o0 = cs[i0][1], cLast = cs[cs.length - 1][3];
+    let hMax = -Infinity;
+    for (let i = i0; i < cs.length; i++) {
+      if (cs[i][2] > hMax) hMax = cs[i][2];
+    }
+    if (!(o0 > 0) || !(hMax > 0) || !(cLast >= 0)) return null;
     claimUsd = nonNeg(claimUsd);
     sellUsd = nonNeg(sellUsd);
     const target = mult * o0;

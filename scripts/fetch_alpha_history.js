@@ -13,11 +13,42 @@ const { NET } = require('./chains');
 const targets = raw.filter(t => (t.onlineAirdrop || t.onlineTge) && NET[t.chainName]);
 console.log(`targets: ${targets.length}`);
 
-const doneSet = new Set();
+const historyFile = path.join(DATA, 'alpha_history.ndjson');
 const doneFile = path.join(DATA, 'fetch_done.json');
-if (!refresh && fs.existsSync(doneFile)) JSON.parse(fs.readFileSync(doneFile, 'utf8')).forEach(s => doneSet.add(s));
-const todo = targets.filter(t => !doneSet.has(t.symbol + '@' + t.contractAddress));
-console.log(`todo: ${todo.length} (done: ${doneSet.size})`);
+const records = new Map();
+if (fs.existsSync(historyFile)) {
+  for (const line of fs.readFileSync(historyFile, 'utf8').split('\n').filter(Boolean)) {
+    try {
+      const r = JSON.parse(line);
+      const key = r.symbol + '@' + r.contract;
+      const prev = records.get(key);
+      if (prev && Array.isArray(prev.candles) && Array.isArray(r.candles)) {
+        const merged = new Map(prev.candles.map(c => [c[0], c]));
+        for (const c of r.candles) merged.set(c[0], c);
+        r.candles = [...merged.values()].sort((a, b) => a[0] - b[0]);
+      }
+      records.set(key, r);
+    } catch {}
+  }
+}
+
+const doneSet = new Set(records.keys());
+if (fs.existsSync(doneFile)) {
+  try { JSON.parse(fs.readFileSync(doneFile, 'utf8')).forEach(s => doneSet.add(s)); } catch {}
+}
+const todo = refresh ? targets : targets.filter(t => !doneSet.has(t.symbol + '@' + t.contractAddress));
+console.log(`todo: ${todo.length} (done: ${doneSet.size}${refresh ? ', refresh all' : ''})`);
+
+function writeAtomic(file, text) {
+  const tmp = file + '.tmp';
+  fs.writeFileSync(tmp, text);
+  fs.renameSync(tmp, file);
+}
+// 先落盘 K 线再更新续传进度，防止中途中断导致 fetch_done 超前于实际 K 线数据
+function checkpoint() {
+  writeAtomic(historyFile, [...records.values()].map(r => JSON.stringify(r)).join('\n') + (records.size ? '\n' : ''));
+  writeAtomic(doneFile, JSON.stringify([...doneSet]));
+}
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function get(url, tries = 6) {
@@ -33,15 +64,13 @@ async function get(url, tries = 6) {
   return undefined; // 彻底失败
 }
 
-const historyFile = path.join(DATA, 'alpha_history.ndjson');
-const records = new Map();
-if (refresh && fs.existsSync(historyFile)) {
-  for (const line of fs.readFileSync(historyFile, 'utf8').split('\n').filter(Boolean)) {
-    const r = JSON.parse(line);
-    records.set(r.symbol + '@' + r.contract, r);
-  }
+let dirty = 0;
+for (const sig of ['SIGINT', 'SIGTERM']) {
+  process.on(sig, () => {
+    if (dirty > 0) checkpoint();
+    process.exit(130);
+  });
 }
-const ndjson = refresh ? null : fs.createWriteStream(historyFile, { flags: 'a' });
 const failed = [];
 
 async function main() {
@@ -56,7 +85,7 @@ async function main() {
   for (const [net, list] of groups) {
     for (let i = 0; i < list.length; i += 30) {
       const batch = list.slice(i, i + 30);
-      const addrs = batch.map(t => t.contractAddress).join(',');
+      const addrs = batch.map(t => encodeURIComponent(t.contractAddress)).join(',');
       const j = await get(`https://api.geckoterminal.com/api/v2/networks/${net}/tokens/multi/${addrs}?include=top_pools`);
       if (j && j.data) {
         for (const tk of j.data) {
@@ -92,28 +121,21 @@ async function main() {
       const candles = bars.map(b => [b[0], b[1], b[2], b[4]]).sort((a, b) => a[0] - b[0]);
       const rec = { symbol: t.symbol, name: t.name, chain: t.chainName, contract: t.contractAddress, listingTime: t.listingTime, listingCex: !!t.listingCex, cexCoinName: t.cexCoinName || '', priceNow: t.price, candles };
       rec.fetchedAt = new Date().toISOString();
-      if (refresh) {
-        const key = t.symbol + '@' + t.contractAddress;
-        const previous = records.get(key);
-        const merged = new Map((previous?.candles || []).map(c => [c[0], c]));
-        for (const c of rec.candles) merged.set(c[0], c);
-        rec.candles = [...merged.values()].sort((a, b) => a[0] - b[0]);
-        records.set(key, rec);
-      }
-      else ndjson.write(JSON.stringify(rec) + '\n');
-      console.log(`[${n}/${todo.length}] ${t.symbol} bars=${candles.length}`);
-      doneSet.add(t.symbol + '@' + t.contractAddress);
-      // 原子写，避免进程在写入中途被打断留下损坏的 JSON，导致下次续传解析失败
-      fs.writeFileSync(doneFile + '.tmp', JSON.stringify([...doneSet]));
-      fs.renameSync(doneFile + '.tmp', doneFile);
+      const recKey = t.symbol + '@' + t.contractAddress;
+      const previous = records.get(recKey);
+      const merged = new Map((previous?.candles || []).map(c => [c[0], c]));
+      for (const c of rec.candles) merged.set(c[0], c);
+      rec.candles = [...merged.values()].sort((a, b) => a[0] - b[0]);
+      records.set(recKey, rec);
+      doneSet.add(recKey);
+      dirty++;
+      if (dirty >= 10) { checkpoint(); dirty = 0; }
+      console.log(`[${n}/${todo.length}] ${t.symbol} bars=${rec.candles.length}`);
     }
     await sleep(3400);
   }
-  if (refresh) {
-    fs.writeFileSync(historyFile + '.tmp', [...records.values()].map(r => JSON.stringify(r)).join('\n') + '\n');
-    fs.renameSync(historyFile + '.tmp', historyFile);
-  } else ndjson.end();
-  fs.writeFileSync(path.join(DATA, 'fetch_failed.json'), JSON.stringify(failed, null, 1));
+  if (dirty > 0) checkpoint();
+  writeAtomic(path.join(DATA, 'fetch_failed.json'), JSON.stringify(failed, null, 1));
   console.log(`ALL DONE. ok=${todo.length - failed.length} failed=${failed.length}`);
 }
 main().catch(e => { console.error('FATAL', e); process.exit(1); });
