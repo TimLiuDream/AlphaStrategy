@@ -30,12 +30,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "XLAB",
+  "symbol": "VLR",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "TOWN",
+  "symbol": "ZKC",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SHARDS",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -50,18 +55,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TAKER",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "TANSSI",
   "chain": "Ethereum",
-  "reason": "no_pool"
- },
- {
-  "symbol": "F",
-  "chain": "BSC",
   "reason": "no_pool"
  },
  {
@@ -85,13 +80,13 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SXT",
+  "symbol": "RDAC",
   "chain": "Base",
   "reason": "no_pool"
  },
  {
-  "symbol": "MILK",
-  "chain": "BSC",
+  "symbol": "SXT",
+  "chain": "Base",
   "reason": "no_pool"
  }
 ]
