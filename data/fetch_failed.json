@@ -1,10 +1,5 @@
 [
  {
-  "symbol": "NES",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "KAT",
   "chain": "BSC",
   "reason": "no_pool"
@@ -15,12 +10,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "KIN",
+  "symbol": "FOGO",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "FOGO",
+  "symbol": "XNAP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SVSA",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -35,13 +35,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "ZKC",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "SHARDS",
-  "chain": "BSC",
+  "symbol": "MIRROR",
+  "chain": "Base",
   "reason": "no_pool"
  },
  {
@@ -70,22 +65,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "HOME",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "ASRR",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "RDAC",
-  "chain": "Base",
+  "symbol": "NXPC",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "SXT",
+  "symbol": "RDAC",
   "chain": "Base",
   "reason": "no_pool"
  }
