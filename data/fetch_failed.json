@@ -1,5 +1,10 @@
 [
  {
+  "symbol": "NES",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "KAT",
   "chain": "BSC",
   "reason": "no_pool"
@@ -30,7 +35,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SUBHUB",
+  "symbol": "BARD",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "VLR",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SHARDS",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -45,17 +60,22 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TAKER",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "TANSSI",
   "chain": "Ethereum",
   "reason": "no_pool"
  },
  {
+  "symbol": "BOMB",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "F",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "SGC",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -76,11 +96,6 @@
  },
  {
   "symbol": "ASRR",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "NXPC",
   "chain": "BSC",
   "reason": "no_pool"
  },
