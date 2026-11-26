@@ -1,5 +1,10 @@
 [
  {
+  "symbol": "NES",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "KAT",
   "chain": "BSC",
   "reason": "no_pool"
@@ -10,17 +15,22 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "KIN",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "FOGO",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "COMMON",
+  "symbol": "OOOO",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "SUBHUB",
+  "symbol": "TYCOON",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -30,7 +40,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "VLR",
+  "symbol": "ZKC",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -55,8 +65,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TANSSI",
-  "chain": "Ethereum",
+  "symbol": "BOOM",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
@@ -75,18 +85,28 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "RESOLV",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "HOME",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "ASRR",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
-  "symbol": "SOPH",
-  "chain": "BSC",
+  "symbol": "PFVS",
+  "chain": "Ethereum",
   "reason": "no_pool"
  },
  {
-  "symbol": "NXPC",
-  "chain": "BSC",
+  "symbol": "SXT",
+  "chain": "Base",
   "reason": "no_pool"
  },
  {
