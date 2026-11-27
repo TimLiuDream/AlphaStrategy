@@ -15,11 +15,6 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "KIN",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "FOGO",
   "chain": "BSC",
   "reason": "no_pool"
@@ -30,7 +25,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TYCOON",
+  "symbol": "ARIAIP",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -50,6 +45,11 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "U",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "BSU",
   "chain": "BSC",
   "reason": "no_pool"
@@ -60,17 +60,12 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "TAKER",
-  "chain": "BSC",
+  "symbol": "TANSSI",
+  "chain": "Ethereum",
   "reason": "no_pool"
  },
  {
   "symbol": "BOOM",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "BOMB",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -85,12 +80,7 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "RESOLV",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
-  "symbol": "HOME",
+  "symbol": "EDGEN",
   "chain": "BSC",
   "reason": "no_pool"
  },
