@@ -1,16 +1,16 @@
 [
  {
-  "symbol": "NES",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "KAT",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "IP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "KIN",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -30,6 +30,16 @@
   "reason": "no_pool"
  },
  {
+  "symbol": "PIGGY",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "XNAP",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
   "symbol": "BARD",
   "chain": "BSC",
   "reason": "no_pool"
@@ -45,7 +55,12 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "U",
+  "symbol": "TOWN",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "FST",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -65,17 +80,17 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "BOOM",
-  "chain": "BSC",
-  "reason": "no_pool"
- },
- {
   "symbol": "F",
   "chain": "BSC",
   "reason": "no_pool"
  },
  {
   "symbol": "PUNDIAI",
+  "chain": "BSC",
+  "reason": "no_pool"
+ },
+ {
+  "symbol": "HOME",
   "chain": "BSC",
   "reason": "no_pool"
  },
@@ -95,8 +110,8 @@
   "reason": "no_pool"
  },
  {
-  "symbol": "SXT",
-  "chain": "Base",
+  "symbol": "TGT",
+  "chain": "BSC",
   "reason": "no_pool"
  },
  {
